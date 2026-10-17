@@ -11,6 +11,7 @@ test('saved GLB survives reload, can switch to sample and back', async ({ page }
   const saved=page.getByRole('button',{name:/选择车辆：孩子的原创四轴卡车.glb/})
   await expect(saved).toBeVisible({timeout:10000})
   await expect(page.getByText('已保存在本机浏览器')).toBeVisible()
+  await page.screenshot({path:'test-results/persistent-garage-chromium.png',fullPage:true})
   await page.getByRole('button',{name:/开始驾驶/}).click()
   await expect(page.getByLabel('驾驶信息')).toContainText('孩子的原创四轴卡车.glb')
   await page.reload()
