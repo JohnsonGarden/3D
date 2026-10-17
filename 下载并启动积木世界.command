@@ -4,8 +4,8 @@
 set -Eeuo pipefail
 export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 
-HOME_DIR="${BRICK_WORLD_HOME:-$HOME/BrickWorld3D-preview-017}"
-ARCHIVE_URL="https://github.com/JohnsonGarden/3D/archive/refs/heads/feat/017-integrate-branches.zip"
+HOME_DIR="${BRICK_WORLD_HOME:-$HOME/BrickWorld3D-preview-019}"
+ARCHIVE_URL="https://github.com/JohnsonGarden/3D/archive/refs/heads/feat/019-local-photo-quality.zip"
 
 # Abort BEFORE download, mkdir, or reuse of an old installed script.
 # Standalone bootstrap intentionally does not depend on adjacent project files.
@@ -59,9 +59,9 @@ else
   trap - EXIT
 fi
 
-echo "预览默认仅在 127.0.0.1:4175 运行；它与旧版 :4173 以及 015 预览 :4174 的浏览器车库互不共享。"
+echo "预览默认仅在 127.0.0.1:4176 运行；它与旧版 :4173 、015 预览 :4174 和 017 预览 :4175 的浏览器车库互不共享。"
 echo "请在两个版本间手动导出/导入 GLB，不会迁移或覆盖已有数据。"
-if BRICK_WORLD_PORT="${BRICK_WORLD_PORT:-4175}" /bin/bash "$HOME_DIR/scripts/start-local.sh" "$@"; then
+if BRICK_WORLD_PORT="${BRICK_WORLD_PORT:-4176}" /bin/bash "$HOME_DIR/scripts/start-local.sh" "$@"; then
   exit 0
 else
   exit $?
