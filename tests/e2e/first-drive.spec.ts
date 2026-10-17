@@ -29,3 +29,17 @@ test('keyboard garage toggle, local music selector and invalid GLB handling', as
   await expect(page.getByLabel('选择背景音乐')).toBeAttached()
   await expect(page.locator('audio')).toHaveCount(0)
 })
+
+test('real WebGL canvas drives forward and reset clears speed', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('canvas')).toBeVisible({ timeout: 15_000 })
+  await page.keyboard.down('w')
+  // Test observable motion, not merely static instructions or a mocked UI.
+  await expect.poll(async () =>
+    (await page.locator('.hud strong').innerText()).trim()
+  , { timeout: 10_000 }).toMatch(/^[1-9][0-9]*\s*km\/h/)
+  await page.keyboard.up('w')
+  await page.screenshot({ path: 'test-results/first-drive-chromium.png', fullPage: true })
+  await page.getByRole('button', { name: /重置车辆/ }).click()
+  await expect(page.locator('.hud strong')).toContainText('0 km/h')
+})

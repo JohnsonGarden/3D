@@ -35,3 +35,5 @@ GitHub Spec Kit: https://github.com/github/spec-kit (constitution â†’ specify â†
 OpenSpec: https://openspec.dev/docs/schemas/spec-driven (proposal/spec/design/tasks)
 Playwright: https://playwright.dev/docs/test-snapshots (stable baseline conditions required)
 React Three Fiber: https://docs.pmnd.rs/react-three-fiber/advanced/scaling-performance (instancing/reuse/draw-call budgets).
+
+After CI browser tests, inspect the \`playable-browser-evidence\` artifact (Chromium screenshot and any Playwright trace). It is UI/graphics review evidence, not a performance benchmark or proof of photo fidelity.
