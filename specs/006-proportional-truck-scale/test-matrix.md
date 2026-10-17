@@ -22,3 +22,6 @@ At commit `a08b6467c9cd0241958470878a29160f8197c234`, https://github.com/Johnson
 
 ## Parent measurement update
 Axle centerline offset from body front: 2.4cm, 5.6cm, 7.2cm, 8.8cm, leaving 1.6cm rear. Front bumper protrudes 0.8cm ahead of body front. All offsets use the one 2.50m/3.1cm multiplier. The old 'unknown bumper' and 5.4m axle-span were temporary assumptions and are superseded.
+
+## Latest four-axle CI evidence
+Commit `8ae468de62418d50000a82c4be46b7c3d02b811f` passed 25 deterministic Node tests, 5 Chromium E2E tests and build. GitHub run https://github.com/JohnsonGarden/3D/actions/runs/39028921837 contains `playable-browser-evidence` screenshot showing the revised four-axle prototype. Tests check exact measured geometric closure, derived longitudinal axle stations, 9.03m total and bumper, plus visible garage labels. Physics of actual steering axles/collisions and photo match are still manual/pending.

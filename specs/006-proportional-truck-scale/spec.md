@@ -1,6 +1,6 @@
 # 006 — Scale the child's brick truck to realistic road-truck proportions
 
-Status: accepted after parent-provided physical measurements (2026-10-17); implementation pending CI confirmation.
+Status: parent measurements accepted (2026-10-17); four-axle procedural implementation and tests green in GitHub Actions, while authentic photo reconstruction, axle steering and real-device performance remain pending.
 
 ## Story
 As a child, I want my actual 10.4 cm long, 3.1 cm wide brick truck to become a giant drivable 3D truck, so that it looks the same and drives on roads/buildings sized like the real world.
