@@ -78,3 +78,39 @@ test('corrupted persisted car is recoverable without clearing other garage entri
   await page.getByRole('button',{name:'确认永久删除'}).click()
   await expect(page.getByRole('button',{name:/选择车辆：corrupted-later.glb/})).toHaveCount(0)
 })
+
+test('six saved slots are capped, seventh import does not destroy existing cars', async ({page}) => {
+  await page.goto('/')
+  await page.getByRole('button',{name:/打开车库/}).click()
+  const chooser = page.getByLabel('导入 GLB 模型')
+  for (let n=1;n<=6;n++) {
+    const name='车-' + n + '.glb'
+    await chooser.setInputFiles({name,mimeType:'model/gltf-binary',buffer:tinyTruckGlb()})
+    await expect(page.getByRole('button',{name:'选择车辆：'+name})).toBeVisible()
+  }
+  await expect(page.getByLabel('已保存车辆')).toContainText('6/6 个保存位')
+  await chooser.setInputFiles({name:'车-7.glb',mimeType:'model/gltf-binary',buffer:tinyTruckGlb()})
+  await expect(page.getByRole('alert')).toContainText('最多保留 6 辆车')
+  await expect(page.getByRole('button',{name:'选择车辆：车-7.glb'})).toHaveCount(0)
+  await page.reload()
+  await page.getByRole('button',{name:/打开车库/}).click()
+  await expect(page.getByLabel('已保存车辆')).toContainText('6/6 个保存位')
+  await expect(page.getByRole('button',{name:'选择车辆：车-1.glb'})).toBeVisible()
+  await expect(page.getByRole('button',{name:'选择车辆：车-6.glb'})).toBeVisible()
+})
+
+test('GLB is never uploaded through an HTTP POST on import or reload',async ({page}) => {
+  const outgoing:string[] = []
+  page.on('request', r => {
+    if (['POST','PUT','PATCH'].includes(r.method())) outgoing.push(r.url())
+  })
+  await page.goto('/')
+  await page.getByRole('button',{name:/打开车库/}).click()
+  await page.getByLabel('导入 GLB 模型').setInputFiles({
+    name:'private-child-build.glb',mimeType:'model/gltf-binary',buffer:tinyTruckGlb()
+  })
+  await expect(page.getByRole('button',{name:/选择车辆：private-child-build.glb/})).toBeVisible()
+  await page.reload()
+  await expect(page.getByLabel('驾驶信息')).toContainText('private-child-build.glb')
+  expect(outgoing).toEqual([])
+})
