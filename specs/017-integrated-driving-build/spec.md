@@ -16,3 +16,6 @@ Given the consolidated branch, when opening the app, then photo selection, garag
 
 ## FR-005 — actual combined test evidence
 Given the integrated branch, when GitHub Actions executes, then SDD tests, Node tests, deploy tests, browser/GLB/016/photo-intake E2E and production build pass in that same commit. Manual Mac/Safari and reference device FPS remain pending.
+
+## FR-006 — isolated current cumulative Mac preview
+Given an old ordinary install at ~/BrickWorld3D and previous preview at ~/BrickWorld3D-preview, when the guardian downloads the 017 branch's executable standalone launcher, then it fetches **017 cumulative source** to dedicated ~/BrickWorld3D-preview-017 and opens loopback :4175 by default, with root refusal before any download, no automatic overwrites or cross-port IndexedDB migration. Existing root protection, mock reuse and occupied-directory safety remain tested. Real Finder/Gatekeeper and first actual GitHub network download remain manual. It is a moving reviewed feature branch, not an immutable hash or signed release.
