@@ -11,9 +11,30 @@ import {
 } from './sim/drivetrain.ts'
 import type { DiffLock, DrivetrainAction } from './sim/drivetrain.ts'
 import { APPROVED_PROFILE_M } from './sim/approved-profile.ts'
+import {
+  listGarageEntries, readGarageVehicle, saveGarageVehicle, deleteGarageVehicle,
+  readSelectedGarageId, writeSelectedGarageId, GarageLimitError, GARAGE_LIMIT
+} from './garage/storage.ts'
+import type { GarageEntry } from './garage/storage.ts'
 
 const MAX_GLB = 20 * 1024 * 1024
 const MAX_AUDIO = 30 * 1024 * 1024
+const SAMPLE_NAME = '阳光积木小车 · 示例模型'
+
+// One import/restore parsing path; validated both before saving and after reading
+// IndexedDB. Never allow corrupt stored GLBs to trigger remote URL fetches.
+async function parseGarageModel(bytes: ArrayBuffer): Promise<Object3D> {
+  validateGlbBytes(bytes)
+  const parsed = await new GLTFLoader().parseAsync(bytes, '')
+  const bounds = new Box3().setFromObject(parsed.scene)
+  const size = bounds.getSize(new Vector3())
+  if (bounds.isEmpty() || ![size.x,size.y,size.z].every(Number.isFinite)) {
+    throw new Error('Empty or invalid GLB geometry')
+  }
+  scaleImportedModelByWidth(size)
+  return parsed.scene
+}
+
 
 function isTypingTarget(target: EventTarget | null): boolean {
   return target instanceof HTMLElement &&
@@ -42,10 +63,16 @@ export default function App() {
     setDrivetrain(current => drivetrainReducer(current, action))
   }, [])
   const [model, setModel] = useState<Object3D | null>(null)
-  const [modelName, setModelName] = useState('阳光积木小车 · 示例模型')
+  const [modelName, setModelName] = useState(SAMPLE_NAME)
   const [musicUrl, setMusicUrl] = useState<string | null>(null)
   const [musicName, setMusicName] = useState<string | null>(null)
   const [error, setError] = useState('')
+  const [garageEntries, setGarageEntries] = useState<GarageEntry[]>([])
+  const [garageReady, setGarageReady] = useState(false)
+  const [garageBusy, setGarageBusy] = useState(false)
+  const [selectedGarageId, setSelectedGarageId] = useState<string | null>(null)
+  const [pendingDelete, setPendingDelete] = useState<GarageEntry | null>(null)
+  const selectionVersion = useRef(0)
   const [webgl] = useState(canRenderWebGL)
 
   const updateControls = useCallback(() => {
@@ -122,6 +149,95 @@ export default function App() {
     })
   }, [model])
 
+
+  // Browser-origin persistence. Do not overwrite an in-flight user selection
+  // when a slower asynchronous startup restore finishes.
+  useEffect(() => {
+    let cancelled = false
+    const token = selectionVersion.current
+    async function restoreGarage() {
+      try {
+        const entries = await listGarageEntries()
+        if (cancelled) return
+        setGarageEntries(entries)
+        const savedId = readSelectedGarageId()
+        const active = entries.find(entry => entry.id === savedId)
+        if (active && token === selectionVersion.current) {
+          try {
+            const data = await readGarageVehicle(active.id)
+            const restored = await parseGarageModel(data)
+            if (cancelled || token !== selectionVersion.current) return
+            setModel(restored)
+            setModelName(active.name)
+            setSelectedGarageId(active.id)
+          } catch {
+            if (cancelled || token !== selectionVersion.current) return
+            writeSelectedGarageId(null)
+            setError('无法恢复已保存的车辆模型。已切回示例车；车库中的原文件仍可手动删除。')
+          }
+        } else if (savedId && !active) {
+          writeSelectedGarageId(null)
+        }
+      } catch {
+        if (!cancelled) {
+          setError('本地车库暂时不可用。请检查浏览器存储权限；示例车仍可正常驾驶。')
+        }
+      } finally {
+        if (!cancelled) setGarageReady(true)
+      }
+    }
+    void restoreGarage()
+    return () => { cancelled = true }
+  }, [])
+
+  const selectSample = () => {
+    selectionVersion.current++
+    writeSelectedGarageId(null)
+    setSelectedGarageId(null)
+    setModel(null)
+    setModelName(SAMPLE_NAME)
+    setError('')
+  }
+
+  const selectSaved = async (entry: GarageEntry) => {
+    const token = ++selectionVersion.current
+    setGarageBusy(true)
+    try {
+      const bytes = await readGarageVehicle(entry.id)
+      const loaded = await parseGarageModel(bytes)
+      if (selectionVersion.current !== token) return
+      setModel(loaded)
+      setModelName(entry.name)
+      setSelectedGarageId(entry.id)
+      writeSelectedGarageId(entry.id)
+      setError('')
+    } catch {
+      if (selectionVersion.current === token) {
+        setError('无法读取已保存的车辆。当前车辆保持不变；请删除损坏文件后重新导入。')
+      }
+    } finally {
+      if (selectionVersion.current === token) setGarageBusy(false)
+    }
+  }
+
+  const confirmRemove = async () => {
+    const item = pendingDelete
+    if (!item) return
+    setGarageBusy(true)
+    try {
+      await deleteGarageVehicle(item.id)
+      setGarageEntries(await listGarageEntries())
+      if (selectedGarageId === item.id) selectSample()
+      // If a restore finishes after deletion, its token no longer matches.
+      if (readSelectedGarageId() === item.id) writeSelectedGarageId(null)
+      setPendingDelete(null)
+    } catch {
+      setError('无法删除本地车辆。请检查浏览器存储权限，然后重试。')
+    } finally {
+      setGarageBusy(false)
+    }
+  }
+
   const loadModel = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     event.target.value = ''
@@ -130,23 +246,30 @@ export default function App() {
       setError('请选择不超过 20 MB 的 .glb 模型文件。')
       return
     }
+    const token = ++selectionVersion.current
+    setGarageBusy(true)
     try {
       const bytes = await file.arrayBuffer()
-      validateGlbBytes(bytes)
-      const parsed = await new GLTFLoader().parseAsync(bytes, '')
-      const box = new Box3().setFromObject(parsed.scene)
-      const dimension = box.getSize(new Vector3())
-      if (box.isEmpty() || ![dimension.x, dimension.y, dimension.z].every(Number.isFinite) ||
-          Math.max(dimension.x, dimension.y, dimension.z) <= 0) {
-        throw new Error('empty or invalid geometry')
-      }
-      scaleImportedModelByWidth(dimension)
-      setModel(parsed.scene)
-      setModelName(file.name)
+      const loaded = await parseGarageModel(bytes)
+      if (token !== selectionVersion.current) return
+      const entry = await saveGarageVehicle(file.name, bytes)
+      if (token !== selectionVersion.current) return
+      setGarageEntries(await listGarageEntries())
+      setModel(loaded)
+      setModelName(entry.name)
+      setSelectedGarageId(entry.id)
+      writeSelectedGarageId(entry.id)
       setError('')
       setGarageOpen(true)
-    } catch {
-      setError('无法读取这个 GLB，请检查模型是否完整，并尝试重新导出。原车辆仍然保留。')
+    } catch (cause) {
+      if (cause instanceof GarageLimitError) setError(cause.message)
+      else if (cause instanceof RangeError || (cause instanceof Error && /GLB|model|geometry/i.test(cause.message))) {
+        setError('无法保存这个 GLB，请检查模型结构、文件名及大小，原车辆仍然保留。')
+      } else {
+        setError('无法写入本地车库。请检查浏览器存储空间或隐私模式，原车辆仍然保留。')
+      }
+    } finally {
+      if (token === selectionVersion.current) setGarageBusy(false)
     }
   }
 
@@ -249,8 +372,50 @@ export default function App() {
           </div>
           <div className="garage-car">
             <span aria-hidden="true">▰</span>
-            <div><strong>{modelName}</strong><small>{model ? '自定义 GLB · 会话临时导入' : '程序化示例 · 尚非照片重建'}</small></div>
+            <div><strong>{modelName}</strong>
+              <small>{model ? '本地已保存 GLB · 非照片自动重建' : '程序化示例 · 尚非照片重建'}</small>
+            </div>
           </div>
+          <section className="garage-library" aria-label="已保存车辆">
+            <div className="garage-library-heading">
+              <strong>我的本地车辆</strong>
+              <small>{garageEntries.length}/{GARAGE_LIMIT} 个保存位</small>
+            </div>
+            <p className="garage-local-notice">已保存在本机浏览器 · 不上传云端。更换浏览器、端口或清理浏览器数据可能失去这些车辆。</p>
+            {!garageReady && <p role="status">正在读取本地车库...</p>}
+            <div className="garage-entry">
+              <button type="button" aria-label="选择程序化示例车"
+                aria-pressed={selectedGarageId === null}
+                disabled={garageBusy} onClick={selectSample}>
+                默认示例卡车 <small>随时可驾驶</small>
+              </button>
+            </div>
+            {garageEntries.map(entry => (
+              <div className="garage-entry" key={entry.id}>
+                <button type="button" className="garage-entry-name"
+                  aria-label={'选择车辆：' + entry.name}
+                  aria-pressed={selectedGarageId === entry.id}
+                  disabled={garageBusy} onClick={() => void selectSaved(entry)}>
+                  {entry.name} <small>本机保存</small>
+                </button>
+                <button type="button" className="garage-delete"
+                  aria-label={'删除车辆：' + entry.name}
+                  disabled={garageBusy} onClick={() => setPendingDelete(entry)}>删除</button>
+              </div>
+            ))}
+          </section>
+          {pendingDelete && (
+            <section className="garage-confirm" role="dialog" aria-modal="true"
+              aria-label="确认删除车辆">
+              <p>确定永久删除“{pendingDelete.name}”吗？此操作只删除本机保存的这辆车，不能撤销。</p>
+              <div>
+                <button type="button" onClick={() => setPendingDelete(null)}
+                  disabled={garageBusy}>取消删除</button>
+                <button type="button" onClick={() => void confirmRemove()}
+                  disabled={garageBusy}>确认永久删除</button>
+              </div>
+            </section>
+          )}
           <div className="calibration" aria-label="等比例放大标定">
             <p className="eyebrow">卡车真实尺寸 · 以实测车宽为基准</p>
             <strong>{TRUCK_DIMENSIONS.scaleFactor.toFixed(2)}× 等比例放大</strong>
@@ -268,10 +433,11 @@ export default function App() {
             </dl>
           </div>
           <label className="file-button">导入孩子的小车（GLB）
-            <input aria-label="导入 GLB 模型" type="file" accept=".glb,model/gltf-binary" onChange={loadModel}/>
+            <input aria-label="导入 GLB 模型" type="file" accept=".glb,model/gltf-binary"
+              disabled={garageBusy || !garageReady} onChange={loadModel}/>
           </label>
-          <p className="hint">只在本机浏览器中读取，不会上传。模型暂不永久保存。导入模型以 X 轴包围盒宽度统一缩放至 2.50 m。若含后视镜等突起则需人工校准，车头方向应为 -Z。</p>
-          <button className="drive-button" onClick={() => setGarageOpen(false)}>开始驾驶 →</button>
+          <p className="hint">只在本机浏览器中读取，不会上传。导入成功后自动保存到此浏览器的 IndexedDB（最多 6 辆）；可在上方手动切换和删除。导入模型以 X 轴包围盒宽度统一缩放至 2.50 m。若含后视镜等突起则需人工校准，车头方向应为 -Z。</p>
+          <button className="drive-button" onClick={() => {keys.current.clear(); updateControls(); setGarageOpen(false)}} disabled={garageBusy}>开始驾驶 →</button>
         </section>
       </div>}
       <section className="music-box" aria-label="背景音乐">

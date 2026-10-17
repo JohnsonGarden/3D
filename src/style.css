@@ -82,3 +82,22 @@ footer { color:#8498b4; text-align:center; font-size:11px; padding:10px; }
  .drivetrain-panel { right:10px; top:173px; width:min(258px,calc(100vw - 20px)); padding:10px; }
  .drivetrain-disclaimer { display:none; }
 }
+
+/* Browser-origin persistent garage; content stays available with overflow. */
+.garage-panel { max-height:min(92vh,900px); overflow-y:auto; }
+.garage-library { padding:11px; background:#e5eaf0; border:1px solid #d2dbe3; border-radius:12px; margin-bottom:14px; }
+.garage-library-heading { display:flex; justify-content:space-between; align-items:center; gap:8px; color:#263750; font-size:13px; }
+.garage-library-heading small { color:#65748a; }
+.garage-local-notice { color:#526278; font-size:11px; line-height:1.5; margin:6px 0 10px; }
+.garage-entry { display:flex; align-items:stretch; gap:8px; margin:6px 0; }
+.garage-entry button { cursor:pointer; background:#fff; color:#243753; border:1px solid #c4ced8; border-radius:9px; padding:9px; font-size:12px; }
+.garage-entry .garage-entry-name,.garage-entry button:first-child { flex:1; min-width:0; text-align:left; overflow-wrap:anywhere; }
+.garage-entry button[aria-pressed="true"] { border-color:#3c7795; background:#d0e3ed; font-weight:750; }
+.garage-entry button:disabled { opacity:.55; cursor:wait; }
+.garage-entry button small { display:block; color:#6d7d8d; font-size:10px; margin-top:3px; }
+.garage-entry .garage-delete { flex:0 0 auto; color:#8d3240; border-color:#e8bbc0; }
+.garage-confirm { border:1px solid #cf9ba2; background:#fff3f3; padding:13px; border-radius:12px; margin:12px 0; }
+.garage-confirm p { color:#702631; font-size:12px; line-height:1.5; }
+.garage-confirm div { display:flex; justify-content:end; gap:8px; }
+.garage-confirm button { background:white; color:#702631; border:1px solid #d0a6a7; border-radius:7px; padding:8px; }
+.garage-confirm button:last-child { background:#a73548; color:white; }
