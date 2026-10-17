@@ -1,0 +1,103 @@
+:root { font-family: Inter, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; color: #eef4ff; background: #121c2d; font-synthesis: none; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible, .file-button:focus-within, .music-upload:focus-within { outline: 3px solid #f6be55; outline-offset: 3px; }
+.shell { min-height: 100vh; display: flex; flex-direction: column; background: #121c2d; }
+.topbar { padding: 14px clamp(16px,3vw,48px); display:flex; justify-content:space-between; align-items:center; gap:20px; background:#18243a; }
+.brand { display:flex; gap:12px; align-items:center; }
+.brand-square { display:grid; place-items:center; background:#f6b83b; width:42px; height:42px; border-radius:10px; color:#1b293b; font-size:27px; font-weight:900; }
+.brand strong { font-size:17px; letter-spacing:0.1em; display:block; }
+.brand small { color:#b7c3d6; display:block; font-size:11px; margin-top:4px; }
+.toolbar-button { background:#f6b83b; color:#172032; padding:10px 18px; border:0; border-radius:12px; font-weight:750; }
+.keycap,kbd { border:1px solid #ffffff55; border-radius:5px; padding:2px 5px; font-size:11px; font-family:inherit; }
+.toolbar-button .keycap { border-color:#1a26394f; margin-left:8px; }
+.world-stage { position:relative; flex:1; min-height: min(68vh,790px); isolation:isolate; background:linear-gradient(#a9c8da,#839b71); }
+.world-stage canvas { display:block; width:100%; height:100%; }
+.scene-label { position:absolute; left:24px; top:22px; padding:8px 13px; background:#122139b8; border:1px solid #ffffff24; border-radius:10px; letter-spacing:.1em; font-size:12px; font-weight:800; pointer-events:none; }
+.scene-label span { color:#c9d7eb; letter-spacing:0; margin-left:10px; font-size:11px; font-weight:400; }
+.hud { position:absolute; right:24px; top:22px; min-width:180px; border-radius:15px; padding:16px; background:#122139de; backdrop-filter:blur(12px); box-shadow:0 10px 35px #0012; }
+.hud p { margin:0 0 4px; color:#b9cbe4; font-size:12px; }
+.hud strong { font-size:42px; font-variant-numeric:tabular-nums; }
+.hud strong small { font-size:13px; }
+.hud .model-label { margin:4px 0 10px; font-size:11px; max-width:180px; word-wrap:break-word; }
+.hud button { background:#344a65; border:0; color:#fff; width:100%; border-radius:8px; padding:9px; text-align:left; }
+.controls-help { position:absolute; display:flex; gap:9px; flex-wrap:wrap; bottom:20px; left:24px; right:24px; pointer-events:none; }
+.controls-help span { background:#122139d6; border-radius:10px; padding:10px 12px; font-size:12px; }
+.controls-help kbd { margin-right:3px; }
+.music-box { display:flex; gap:15px; align-items:center; padding:12px 24px; background:#18243a; min-height:72px; }
+.music-upload,.file-button { display:inline-block; position:relative; cursor:pointer; background:#273c58; border:1px solid #60718c; border-radius:10px; padding:11px 15px; font-weight:650; font-size:13px; }
+.music-upload input,.file-button input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+.music-box audio { height:38px; max-width:100%; }
+footer { color:#8498b4; text-align:center; font-size:11px; padding:10px; }
+.garage-backdrop { position:absolute; inset:0; z-index:5; display:grid; place-items:center; padding:20px; background:#081422a8; backdrop-filter:blur(5px); }
+.garage-panel { width:min(95vw,490px); padding:26px; border-radius:22px; background:#f3f2ec; color:#172339; box-shadow:0 25px 80px #06152a99; }
+.garage-header { display:flex; justify-content:space-between; align-items:flex-start; }
+.garage-header h1 { margin:4px 0 22px; font-size:28px; }
+.garage-header button { background:#dce1e5; border:0; border-radius:10px; padding:9px 13px; }
+.eyebrow { letter-spacing:0.16em; font-size:11px; font-weight:800; color:#6e7b91; margin:0; }
+.garage-car { display:flex; align-items:center; gap:16px; padding:19px; margin-bottom:16px; border-radius:14px; background:#dde5e6; }
+.garage-car > span { font-size:44px; color:#e0a32b; text-shadow:0 4px #81683a; }
+.garage-car strong,.garage-car small { display:block; }
+.garage-car small { color:#5d6679; margin-top:6px; }
+.garage-panel .file-button { background:#fff; color:#172339; border-color:#a9b2bf; }
+.hint { color:#616b7c; font-size:12px; line-height:1.7; margin:15px 0; }
+.drive-button { width:100%; padding:14px; background:#f0b33c; color:#152038; border:0; border-radius:12px; font-weight:850; }
+.toast { position:fixed; z-index:10; bottom:100px; left:50%; transform:translateX(-50%); background:#5b2533; border:1px solid #f5a6b7; padding:13px 16px; border-radius:12px; width:min(92vw,520px); box-shadow:0 10px 40px #0007; display:flex; gap:15px; align-items:center; }
+.toast button { margin-left:auto; color:white; border:1px solid #f5a6b7; border-radius:8px; background:transparent; padding:7px; }
+.fallback { max-width:650px; margin:80px auto; color:#18243a; background:#fff9; padding:24px; border-radius:18px; line-height:1.7; }
+@media(max-width:620px){ .brand strong{font-size:13px}.brand small{font-size:10px}.scene-label{left:12px;top:12px;max-width:210px;line-height:1.8}.scene-label span{display:block;margin:0}.hud{right:12px;top:12px;min-width:130px;padding:10px}.hud strong{font-size:30px}.controls-help{left:10px;right:10px;bottom:10px;gap:5px}.controls-help span{padding:7px;font-size:10px}.music-box{flex-wrap:wrap;padding:12px}.world-stage{min-height:60vh} }
+
+.calibration { background:#e2e9eb; border:1px solid #bdc9ce; padding:14px; margin:8px 0 16px; border-radius:12px; }
+.calibration strong { display:block; color:#183456; font-size:19px; margin:6px 0 10px; }
+.calibration dl { margin:0; }
+.calibration dl div { display:flex; justify-content:space-between; gap:10px; padding:6px 0; border-top:1px solid #c8d3d8; }
+.calibration dt { color:#3e5369; font-size:12px; }
+.calibration dd { font-weight:750; white-space:nowrap; font-variant-numeric:tabular-nums; margin:0; font-size:12px; }
+
+/* Drivetrain controller — distinguish arcade state from mechanically realistic physics. */
+.drivetrain-panel {
+  position:absolute; right:24px; top:212px; width:274px;
+  background:#122139e9; color:#eaf4ff; padding:13px;
+  border:1px solid #91aed83d; border-radius:14px;
+  box-shadow:0 15px 40px #06101b55; backdrop-filter:blur(12px);
+}
+.drivetrain-panel-head { display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:800; margin-bottom:10px; }
+.drivetrain-tag { font-weight:550; font-size:10px; color:#e7c378; background:#e1ad3429; padding:4px 7px; border-radius:99px; }
+.drivetrain-panel button { border:1px solid #7289a86b; color:#edf7ff; background:#223c59; border-radius:9px; padding:9px; text-align:left; }
+.drivetrain-panel button:hover { border-color:#d0d9eb; }
+.drive-mode-toggle,.surface-toggle { display:flex; width:100%; justify-content:space-between; align-items:center; gap:8px; }
+.drive-mode-toggle span,.surface-toggle span { color:#b2c7df; font-size:11px; }
+.drive-mode-toggle strong,.surface-toggle strong { font-size:12px; }
+.drivetrain-panel kbd { font-size:10px; margin-left:3px; }
+.powered-axles,.grip-label { font-size:11px; color:#b9d0ec; margin:7px 0 10px; }
+.lock-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:9px 0; }
+.lock-grid button { min-width:0; display:flex; flex-direction:column; align-items:center; gap:5px; text-align:center; }
+.lock-grid small { font-size:10px; white-space:nowrap; }
+.lock-grid strong { font-size:12px; }
+.drivetrain-panel button[aria-pressed="true"] { background:#315b52; border-color:#68c6ad; }
+.drivetrain-disclaimer { margin:8px 0 0; color:#adc3df; font-size:10px; line-height:1.55; }
+@media(max-width:800px){
+ .drivetrain-panel { right:10px; top:173px; width:min(258px,calc(100vw - 20px)); padding:10px; }
+ .drivetrain-disclaimer { display:none; }
+}
+
+/* Browser-origin persistent garage; content stays available with overflow. */
+.garage-panel { max-height:min(92vh,900px); overflow-y:auto; }
+.garage-library { padding:11px; background:#e5eaf0; border:1px solid #d2dbe3; border-radius:12px; margin-bottom:14px; }
+.garage-library-heading { display:flex; justify-content:space-between; align-items:center; gap:8px; color:#263750; font-size:13px; }
+.garage-library-heading small { color:#65748a; }
+.garage-local-notice { color:#526278; font-size:11px; line-height:1.5; margin:6px 0 10px; }
+.garage-entry { display:flex; align-items:stretch; gap:8px; margin:6px 0; }
+.garage-entry button { cursor:pointer; background:#fff; color:#243753; border:1px solid #c4ced8; border-radius:9px; padding:9px; font-size:12px; }
+.garage-entry .garage-entry-name,.garage-entry button:first-child { flex:1; min-width:0; text-align:left; overflow-wrap:anywhere; }
+.garage-entry button[aria-pressed="true"] { border-color:#3c7795; background:#d0e3ed; font-weight:750; }
+.garage-entry button:disabled { opacity:.55; cursor:wait; }
+.garage-entry button small { display:block; color:#6d7d8d; font-size:10px; margin-top:3px; }
+.garage-entry .garage-delete { flex:0 0 auto; color:#8d3240; border-color:#e8bbc0; }
+.garage-confirm { border:1px solid #cf9ba2; background:#fff3f3; padding:13px; border-radius:12px; margin:12px 0; }
+.garage-confirm p { color:#702631; font-size:12px; line-height:1.5; }
+.garage-confirm div { display:flex; justify-content:end; gap:8px; }
+.garage-confirm button { background:white; color:#702631; border:1px solid #d0a6a7; border-radius:7px; padding:8px; }
+.garage-confirm button:last-child { background:#a73548; color:white; }
