@@ -6,6 +6,9 @@
 - [x] T-005 [FR-003] Normalize GLB imported width only and reject degenerate model width.
 - [x] T-006 [FR-004] Expose original and derived physical dimensions in garage UI.
 - [x] T-007 [FR-005] Run CI spec/type/unit/build and browser test; inspect screenshots.
+- [ ] T-009 [FR-006] Record new measured four-axle stations and front bumper beyond body in scale model.
+- [ ] T-010 [FR-006,FR-002] Update sample renderer to four axles with eight wheels total and measured bumper projection.
+- [ ] T-011 [FR-004,FR-006,FR-005] Display total length/axle spans in garage, add RED tests and get CI green.
 - [ ] T-008 [FR-002,FR-003] Parent photo-to-GLB reconstruction and actual wheelbase/bumper measurement remain later human validation tasks.
 
 Tasks checked before green implementation denote authored work only; do not mark CI pass until recorded.

@@ -10,7 +10,8 @@ const near = (a: number, b: number) => assert.ok(Math.abs(a - b) < 1e-9, a + ' v
 test('RED/FR-001: measurements are stored in cm without inventing front bumper', () => {
   assert.deepEqual(TOY_TRUCK_CM, {
     bodyLength: 10.4, bodyWidth: 3.1, cabHighestPoint: 4.7,
-    tireDiameter: 1.4, frontBumperProjection: null
+    tireDiameter: 1.4, frontBumperProjection: 0.8,
+    frontAxleOffset: 2.4, axleSpacing: [3.2, 1.6, 1.6], rearAxleOffset: 1.6
   })
   near(TARGET_TRUCK_WIDTH_M, 2.5)
 })
@@ -22,7 +23,8 @@ test('RED/FR-001: single factor yields measured real-world dimensions', () => {
   near(c.bodyWidthM, 2.5)
   near(c.cabHighestPointM, 4.7 / 3.1 * 2.5)
   near(c.tireDiameterM, 1.4 / 3.1 * 2.5)
-  assert.equal(c.frontBumperProjectionM, null)
+  near(c.frontBumperProjectionM, .8 / 3.1 * 2.5)
+  near(c.totalLengthWithBumperM, 11.2 / 3.1 * 2.5)
   assert.deepEqual(c, TRUCK_DIMENSIONS)
 })
 
@@ -54,4 +56,34 @@ test('RED/FR-003: reject empty, zero width, NaN or absurd imported model dimensi
 test('RED/FR-002: truck fits a nominal 3.5m lane with 0.5m each side', () => {
   near(TRUCK_DIMENSIONS.laneWidthM, 3.5)
   near((TRUCK_DIMENSIONS.laneWidthM - TRUCK_DIMENSIONS.bodyWidthM) / 2, 0.5)
+})
+
+test('FR-006: four axle centers follow all user-measured intervals from front body', () => {
+  const c = TRUCK_DIMENSIONS
+  assert.equal(c.axleFromFrontM.length, 4)
+  for (const [i, cm] of [2.4, 5.6, 7.2, 8.8].entries()) {
+    near(c.axleFromFrontM[i], cm / 3.1 * 2.5)
+    near(c.axleLocalZFromBodyCenterM[i], (cm - 10.4 / 2) / 3.1 * 2.5)
+  }
+  for (const [i, cm] of [3.2, 1.6, 1.6].entries()) {
+    near(c.axleSpacingM[i], cm / 3.1 * 2.5)
+    near(c.axleFromFrontM[i + 1] - c.axleFromFrontM[i], c.axleSpacingM[i])
+  }
+  near(c.firstToFourthAxleM, 6.4 / 3.1 * 2.5)
+  near(c.rearAxleOffsetM, 1.6 / 3.1 * 2.5)
+  near(c.frontBumperProjectionM, 0.8 / 3.1 * 2.5)
+  near(c.totalLengthWithBumperM, 11.2 / 3.1 * 2.5)
+  near(c.bodyLengthM + c.frontBumperProjectionM, c.totalLengthWithBumperM)
+})
+
+test('FR-006: reject axle data that does not close against observed body length', () => {
+  assert.throws(() => calibrateTruck({
+    ...TOY_TRUCK_CM, rearAxleOffset: 2.0
+  }, 2.5), RangeError)
+  assert.throws(() => calibrateTruck({
+    ...TOY_TRUCK_CM, axleSpacing: [3.2, 0, 1.6]
+  }, 2.5), RangeError)
+  assert.throws(() => calibrateTruck({
+    ...TOY_TRUCK_CM, frontAxleOffset: NaN
+  }, 2.5), RangeError)
 })

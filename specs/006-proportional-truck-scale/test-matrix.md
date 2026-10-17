@@ -6,6 +6,7 @@
 | FR-002 | `truck-scale.test.ts` + `vehicle.test.ts`: truck dimensions/wheelbase; Chromium scene | Validate high point/wheels visually; sampled mesh remains fabricated |
 | FR-003 | `truck-scale.test.ts` imported bounds uniform scale/invalid dimensions | Import 3D faithful GLB; pending model creation |
 | FR-004 | `first-drive.spec.ts` garage visible calibrated measurement labels | Parent approval that bumper excluded |
+| FR-006 | `truck-scale.test.ts` closure + exact four axle positions and bumper; Chromium assertion | Check actual bumper height, wheel count per axle and suspension against photos (pending) |
 | FR-005 | GitHub Actions spec/unit/build/Chromium | Record actual run URL and evidence after green |
 
 ### Baseline (RED stage)
@@ -18,3 +19,6 @@ Existing code hardcodes passenger-car prototype (length 3.6 m, width 1.8 m), and
 
 ### Automated evidence — GREEN
 At commit `a08b6467c9cd0241958470878a29160f8197c234`, https://github.com/JohnsonGarden/3D/actions/runs/39028274592 reports 22 Node tests passed, 4 Chromium tests passed, TypeScript/Vite build passed. Browser artifact contains a rendering screenshot. Parent/child playtest and actual GLB-to-photo geometry comparison are NOT complete.
+
+## Parent measurement update
+Axle centerline offset from body front: 2.4cm, 5.6cm, 7.2cm, 8.8cm, leaving 1.6cm rear. Front bumper protrudes 0.8cm ahead of body front. All offsets use the one 2.50m/3.1cm multiplier. The old 'unknown bumper' and 5.4m axle-span were temporary assumptions and are superseded.
