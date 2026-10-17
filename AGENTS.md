@@ -52,3 +52,6 @@ If the next task is too large, split it at a child-visible playable checkpoint r
 
 
 - Performance diagnostics 013: only measure browser R3F real frame intervals opt-in, during foreground driving. Bound sample retention, filter paused/background gaps, publish at most about once/second, no telemetry or React state per RAF tick. 60 FPS median and 33ms p95 are target conditions pending a reference Mac run; do not substitute CI/headless browser for hardware benchmarks.
+
+
+- Road-trip 014: the three fictional road gates share `src/game/checkpoints.ts` geometry and their simulated swept trigger. Progress increments only upon the next checkpoint, never each rendered frame; R resets truck only, while explicitly named journey restart clears progress and truck. Do not portray fictional gate names as real LA geography, and do not promise savegame persistence.

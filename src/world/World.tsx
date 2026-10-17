@@ -8,6 +8,7 @@ import { resolveSceneryContact } from '../sim/contact.ts'
 import { FrameMetricWindow } from '../sim/frame-metrics.ts'
 import type { FrameMetrics } from '../sim/frame-metrics.ts'
 import { CITY_BUILDINGS } from './city-layout.ts'
+import { ROAD_TRIP, advanceCheckpoints } from '../game/checkpoints.ts'
 import type { DriverInput, VehicleState } from '../sim/vehicle.ts'
 import { tickFixed } from '../sim/fixed-step.ts'
 import { axleSteerAngles } from '../sim/drivetrain.ts'
@@ -24,6 +25,8 @@ type WorldProps = {
   onCollision: (hit: boolean) => void
   monitorPerformance: boolean
   onPerformance: (metrics: FrameMetrics | null) => void
+  journeyResetCount: number
+  onCheckpoint: (completed: number) => void
 }
 
 function BrickCar({ wheelStations }: { wheelStations: MutableRefObject<Record<string, Group | null>> }) {
@@ -166,6 +169,14 @@ function RoadsAndBuildings() {
           <meshStandardMaterial color={b.color} roughness={0.88} />
         </mesh>
       ))}
+      {/* Three fictional checkpoints. Pure game logic and visible rings share ROAD_TRIP coordinates. */}
+      {ROAD_TRIP.map(gate => (
+        <mesh key={gate.id} position={[gate.x,3.45,gate.z]}>
+          <torusGeometry args={[3.4,0.15,12,40]} />
+          <meshStandardMaterial color={gate.color} emissive={gate.color}
+            emissiveIntensity={0.16} roughness={0.38} />
+        </mesh>
+      ))}
       <mesh position={[8.4, 1.8, 14.2]}>
         <boxGeometry args={[0.12, 2.8, 5.4]} />
         <meshStandardMaterial color="#364959" />
@@ -176,7 +187,7 @@ function RoadsAndBuildings() {
 
 function DrivingScene({
   controls, drivetrain, garageOpen, resetCount, model, onSpeed, onCollision,
-  monitorPerformance, onPerformance
+  monitorPerformance, onPerformance, journeyResetCount, onCheckpoint
 }: WorldProps) {
   const car = useRef<Group>(null)
   const wheelStations = useRef<Record<string, Group | null>>({})
@@ -186,6 +197,7 @@ function DrivingScene({
   const frameWindow = useRef(new FrameMetricWindow())
   const performanceClock = useRef(0)
   const contactActive = useRef(false)
+  const checkpointProgress = useRef(0)
   const targetPos = useRef(new Vector3())
   const lookAtPos = useRef(new Vector3())
   const { camera } = useThree()
@@ -204,6 +216,11 @@ function DrivingScene({
     onPerformance(null)
   }, [monitorPerformance, garageOpen, onPerformance])
 
+  useEffect(() => {
+    checkpointProgress.current = 0
+    onCheckpoint(0)
+  }, [journeyResetCount, onCheckpoint])
+
   useFrame((_, rawDt) => {
     // Real RAF intervals, not the clamped 60 Hz simulation step.
     // No frame-sampling or UI writes while diagnostics are disabled.
@@ -221,9 +238,15 @@ function DrivingScene({
       accumulated.current = tickFixed(
         accumulated.current, dt, VEHICLE.fixedStep, 6,
         () => {
-          const proposed = advanceVehicle(vehicle.current, controls.current, VEHICLE.fixedStep, drivetrain.current)
-          const result = resolveSceneryContact(vehicle.current, proposed, CITY_BUILDINGS)
+          const previous = vehicle.current
+          const proposed = advanceVehicle(previous, controls.current, VEHICLE.fixedStep, drivetrain.current)
+          const result = resolveSceneryContact(previous, proposed, CITY_BUILDINGS)
           vehicle.current = result.state
+          const completed = advanceCheckpoints(previous, result.state, checkpointProgress.current)
+          if (completed !== checkpointProgress.current) {
+            checkpointProgress.current = completed
+            onCheckpoint(completed)
+          }
           if (result.hit && !contactActive.current) {
             contactActive.current = true
             onCollision(true)
