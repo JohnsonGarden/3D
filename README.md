@@ -21,6 +21,11 @@ whoami
 
 如果切回普通用户后出现 `Permission denied` / `EACCES`，可能之前使用管理员权限创建了 root 所有的安装目录：检查 `ls -ld "$HOME/BrickWorld3D"` 和 `ls -ld "$HOME/.npm"`，先确认实际归属；**不要直接递归修改整个系统或 Homebrew 的权限**。提供检查结果再选择范围最小的处理方法。
 
+## 当前开发预览包（013，尚未合并）
+由于仓库默认 `main` 尚未包含游戏可运行代码，当前最新的连续开发预览位于独立分支 `feat/013-fictional-junctions`。可下载 [**013 开发预览完整 ZIP**](https://github.com/JohnsonGarden/3D/archive/refs/heads/feat/013-fictional-junctions.zip)，解压整个目录，再双击其中的 `启动积木世界.command`；若 Finder 无法执行，在项目文件夹的终端运行 `bash scripts/start-local.sh`。此预览包依次包含 010 车库 GLB 导出、011 触屏驾驶、012 npm 锁定和 013 虚构街道路口。
+
+**注意：**原有的 `下载并启动积木世界.command` 固定获取旧的 `feat/lego-world-harness-v0` 开发分支，且会保留 `~/BrickWorld3D` 内的旧安装文件，**不会自动升级到 013**。请勿直接覆盖自己保存过手动修改的旧文件夹；导入的 GLB 需从车库逐辆导出备份，IndexedDB 随浏览器来源/端口独立保存。本预览尚未完成真实 Mac Finder / Safari 和家长车辆外观验收。
+
 ## Mac 一键本地部署（建议使用）
 
 **适用于 MacBook Air / MacBook Pro 的 Apple Silicon 与 Intel Mac。**
