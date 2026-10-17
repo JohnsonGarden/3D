@@ -49,3 +49,6 @@ If the next task is too large, split it at a child-visible playable checkpoint r
 
 
 - Scenery contact 012: `src/world/city-layout.ts` must remain single source of truth for solid building footprints in both R3F meshes and `src/sim/contact.ts`. Measured truck is a 2D swept oriented rectangle with extra front bumper; do not describe it as a rigid-body simulator, curb/ground contact, per-tire collision or imported-GLB exact mesh. Fixed-step contact must be deterministic, bounded, recoverable via reverse/reset and emit React state only on collision status transitions.
+
+
+- Performance diagnostics 013: only measure browser R3F real frame intervals opt-in, during foreground driving. Bound sample retention, filter paused/background gaps, publish at most about once/second, no telemetry or React state per RAF tick. 60 FPS median and 33ms p95 are target conditions pending a reference Mac run; do not substitute CI/headless browser for hardware benchmarks.
