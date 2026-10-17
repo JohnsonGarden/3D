@@ -1,5 +1,8 @@
 # Architecture / system boundaries
 
+## Target pipeline and current limits (016)
+The intended interaction is local multiview photo intake → capture/scale assessment → faithful brick/pixel GLB generation plus approval → canonical car identity with physics/garage storage → **separately generated** structural realistic variant → reversible style selector. **Only photo intake session preview and manual GLB import are planned for 016; no real photo-to-mesh or style generation exists yet.** Ongoing early development uses fictional practice roads, with real-city downtown geodata only in **Stockholm, Frankfurt, Los Angeles** sequence. See [product requirements](product-requirements.md).
+
 ## Current M0
 Browser-only React + Vite + React Three Fiber + Three.js, TypeScript. `src/sim/vehicle.ts` exposes pure kinematic stepping; `src/world/World.tsx` renders the procedural world and applies a fixed 1/60 s update; UI controls are DOM with keyboard input captured in a hook.
 
