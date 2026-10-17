@@ -1,0 +1,1 @@
+Use AGENTS.md and .specify/memory/constitution.md as the binding development contract. Every feature must have a specs/*/{spec,plan,tasks,test-matrix}.md quartet and traceable test evidence before merge. Never claim photo reconstruction or accurate LA map where only placeholders exist.
