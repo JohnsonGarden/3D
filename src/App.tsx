@@ -16,6 +16,7 @@ import {
   readSelectedGarageId, writeSelectedGarageId, GarageLimitError, GARAGE_LIMIT
 } from './garage/storage.ts'
 import type { GarageEntry } from './garage/storage.ts'
+import { prepareGarageExport } from './garage/export.ts'
 
 const MAX_GLB = 20 * 1024 * 1024
 const MAX_AUDIO = 30 * 1024 * 1024
@@ -238,6 +239,32 @@ export default function App() {
     }
   }
 
+  const exportSaved = async (entry: GarageEntry) => {
+    if (garageBusy) return
+    setGarageBusy(true)
+    let downloadUrl: string | null = null
+    try {
+      const bytes = await readGarageVehicle(entry.id)
+      const { filename, blob } = prepareGarageExport(entry.name, bytes)
+      downloadUrl = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = downloadUrl
+      link.download = filename
+      link.style.display = 'none'
+      document.body.appendChild(link)
+      try { link.click() } finally { link.remove() }
+      // Delay revocation so WebKit/Chromium can finish acquiring the file.
+      window.setTimeout(() => URL.revokeObjectURL(downloadUrl!), 2000)
+      downloadUrl = null
+      setError('')
+    } catch {
+      setError('无法导出这辆车：本地 GLB 缺失、损坏或浏览器存储不可用。车库记录仍保留，请尝试重新导入原始文件。')
+    } finally {
+      if (downloadUrl) URL.revokeObjectURL(downloadUrl)
+      setGarageBusy(false)
+    }
+  }
+
   const loadModel = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     event.target.value = ''
@@ -381,7 +408,7 @@ export default function App() {
               <strong>我的本地车辆</strong>
               <small>{garageEntries.length}/{GARAGE_LIMIT} 个保存位</small>
             </div>
-            <p className="garage-local-notice">已保存在本机浏览器 · 不上传云端。更换浏览器、端口或清理浏览器数据可能失去这些车辆。</p>
+            <p className="garage-local-notice">仅保存在当前浏览器 · 不上传云端。请逐辆点击“导出 GLB”手动备份到安全位置；更换浏览器、端口或清理数据都可能失去车库记录。备份文件可重新导入。</p>
             {!garageReady && <p role="status">正在读取本地车库...</p>}
             <div className="garage-entry">
               <button type="button" aria-label="选择程序化示例车"
@@ -398,6 +425,9 @@ export default function App() {
                   disabled={garageBusy} onClick={() => void selectSaved(entry)}>
                   {entry.name} <small>本机保存</small>
                 </button>
+                <button type="button" className="garage-export"
+                  aria-label={'导出车辆：' + entry.name}
+                  disabled={garageBusy} onClick={() => void exportSaved(entry)}>导出 GLB</button>
                 <button type="button" className="garage-delete"
                   aria-label={'删除车辆：' + entry.name}
                   disabled={garageBusy} onClick={() => setPendingDelete(entry)}>删除</button>
