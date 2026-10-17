@@ -3,6 +3,7 @@ import type { ChangeEvent } from 'react'
 import { Box3, Object3D, Vector3 } from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import World from './world/World.tsx'
+import { validateGlbBytes } from './sim/glb-guard.ts'
 import type { DriverInput } from './sim/vehicle.ts'
 
 const MAX_GLB = 20 * 1024 * 1024
@@ -108,7 +109,9 @@ export default function App() {
       return
     }
     try {
-      const parsed = await new GLTFLoader().parseAsync(await file.arrayBuffer(), '')
+      const bytes = await file.arrayBuffer()
+      validateGlbBytes(bytes)
+      const parsed = await new GLTFLoader().parseAsync(bytes, '')
       const box = new Box3().setFromObject(parsed.scene)
       const dimension = box.getSize(new Vector3())
       if (box.isEmpty() || ![dimension.x, dimension.y, dimension.z].every(Number.isFinite) ||

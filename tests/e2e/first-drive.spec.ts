@@ -24,7 +24,7 @@ test('keyboard garage toggle, local music selector and invalid GLB handling', as
     mimeType: 'text/plain',
     buffer: Buffer.from('invalid')
   })
-  await expect(page.getByRole('alert')).toContainText('20 MB')
+  await expect(page.getByText('请选择不超过 20 MB 的 .glb 模型文件。')).toBeVisible()
   await page.getByRole('button', { name: '关闭车库' }).click()
   await expect(page.getByLabel('选择背景音乐')).toBeAttached()
   await expect(page.locator('audio')).toHaveCount(0)
