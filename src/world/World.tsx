@@ -7,6 +7,7 @@ import { advanceVehicle, INITIAL_VEHICLE, VEHICLE, speedKmh } from '../sim/vehic
 import type { DriverInput, VehicleState } from '../sim/vehicle.ts'
 import { tickFixed } from '../sim/fixed-step.ts'
 import { axleSteerAngles } from '../sim/drivetrain.ts'
+import { APPROVED_PROFILE_M } from '../sim/approved-profile.ts'
 import type { DrivetrainState } from '../sim/drivetrain.ts'
 
 type WorldProps = {
@@ -26,20 +27,29 @@ function BrickCar({ wheelStations }: { wheelStations: MutableRefObject<Record<st
   const radius = VEHICLE.wheelDiameter / 2
   const halfLength = VEHICLE.length / 2
   const cabRoof = VEHICLE.height - 0.12
+  const cabLength = APPROVED_PROFILE_M.cabLength
+  const cabCenterZ = -halfLength + cabLength / 2
+  const cabRearZ = -halfLength + cabLength
+  const cabBottom = VEHICLE.wheelDiameter + APPROVED_PROFILE_M.wheelArchTopTireGap
+  const cabHeight = VEHICLE.height - cabBottom
 
   return (
     <group>
-      <mesh position={[0, 0.99, 0]} castShadow receiveShadow>
-        <boxGeometry args={[VEHICLE.width, 0.82, VEHICLE.length]} />
+      {/* 0.3cm toy → 0.242m world under-frame clearance: two open-frame rails.
+          The rear is exposed chassis/deck, NOT a tall cargo container. */}
+      {[-0.63, 0.63].map(x => (
+        <mesh key={'rail-' + x} position={[x, APPROVED_PROFILE_M.chassisGroundClearance + 0.15, 0]} castShadow>
+          <boxGeometry args={[0.28, 0.30, VEHICLE.length]} />
+          <meshStandardMaterial color="#454d56" metalness={0.3} roughness={0.72} />
+        </mesh>
+      ))}
+      <mesh position={[0, (VEHICLE.height + cabBottom) / 2, cabCenterZ]} castShadow receiveShadow>
+        <boxGeometry args={[VEHICLE.width, cabHeight, cabLength]} />
         <meshStandardMaterial color="#e9a72b" metalness={0.07} roughness={0.39} />
       </mesh>
-      <mesh position={[0, 2.36, 1.55]} castShadow>
-        <boxGeometry args={[VEHICLE.width * 0.96, 1.88, 5.18]} />
-        <meshStandardMaterial color="#f5c14a" roughness={0.38} />
-      </mesh>
-      <mesh position={[0, (cabRoof + 1.36) / 2, -2.44]} castShadow>
-        <boxGeometry args={[VEHICLE.width, cabRoof - 1.36, 3.4]} />
-        <meshStandardMaterial color="#e5a52f" metalness={0.07} roughness={0.34} />
+      <mesh position={[0, 0.99, cabRearZ + (VEHICLE.length - cabLength) / 2]} castShadow>
+        <boxGeometry args={[VEHICLE.width * 0.68, 0.20, VEHICLE.length - cabLength]} />
+        <meshStandardMaterial color="#737a81" metalness={0.28} roughness={0.65} />
       </mesh>
       <mesh position={[0, 2.7, -halfLength + 0.026]}>
         <boxGeometry args={[VEHICLE.width * 0.84, 0.75, 0.045]} />
@@ -61,12 +71,13 @@ function BrickCar({ wheelStations }: { wheelStations: MutableRefObject<Record<st
           </mesh>
         ))
       )}
-      {[-0.5, 0.2, 0.9, 1.6, 2.3, 3, 3.7].flatMap(z =>
-        [-0.8, 0, 0.8].map(x => (
-          <mesh key={'rear-stud-' + x + '-' + z}
-            position={[x, 3.38, z]} castShadow>
-            <cylinderGeometry args={[0.17, 0.17, 0.15, 12]} />
-            <meshStandardMaterial color="#f5c34c" roughness={0.42} />
+      {/* Low, sparse deck anchors; no full-height box/cargo body. */}
+      {[0.3, 1.2, 2.1, 3.0, 3.7].flatMap(z =>
+        [-0.55, 0, 0.55].map(x => (
+          <mesh key={'deck-stud-' + x + '-' + z}
+            position={[x, 1.14, z]} castShadow>
+            <cylinderGeometry args={[0.105, 0.105, 0.10, 12]} />
+            <meshStandardMaterial color="#9ea6a5" metalness={0.12} roughness={0.45} />
           </mesh>
         ))
       )}
