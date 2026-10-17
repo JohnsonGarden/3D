@@ -60,6 +60,7 @@ export default function App() {
   const [garageOpen, setGarageOpen] = useState(false)
   const [resetCount, setResetCount] = useState(0)
   const [speed, setSpeed] = useState(0)
+  const [collision, setCollision] = useState(false)
   const [drivetrain, setDrivetrain] = useState(INITIAL_DRIVETRAIN)
   const drivetrainRef = useRef(INITIAL_DRIVETRAIN)
   drivetrainRef.current = drivetrain
@@ -352,7 +353,7 @@ export default function App() {
       <div className="world-stage">
         {webgl ?
           <World controls={controls} drivetrain={drivetrainRef} garageOpen={garageOpen} resetCount={resetCount}
-            model={model} onSpeed={setSpeed} />
+            model={model} onSpeed={setSpeed} onCollision={setCollision} />
           : <div role="alert" className="fallback">
               当前浏览器无法启动 WebGL 2。请开启硬件加速并更新浏览器，或换一台支持 3D 图形的电脑。
             </div>}
@@ -360,6 +361,7 @@ export default function App() {
         <section className="hud" aria-label="驾驶信息">
           <p>正在驾驶</p><strong>{speed}<small> km/h</small></strong>
           <p className="model-label">{modelName}</p>
+          {collision && <p className="contact-alert" role="status" aria-label="驾驶碰撞提示">碰撞：车辆已停车 · 按 R 重置或倒车离开</p>}
           <button onClick={() => setResetCount(n => n + 1)}>重置车辆 <span className="keycap">R</span></button>
         </section>
         <section className="drivetrain-panel" aria-label="传动系统">
