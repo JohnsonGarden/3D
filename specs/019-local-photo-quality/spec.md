@@ -19,3 +19,6 @@ Given CI, when Node unit tests and Chromium photo selection run, then the pure p
 
 ## Non-goals
 Camera capture, AI-based photo segmentation, calibrated sharpness model, automatic corrections, HEIC conversion, cloud inference, GPU neural networks, photo-to-3D generation, style conversion or city GIS.
+
+## FR-005 — locally isolated macOS photo-preview handoff
+Given an existing installation at :4173, an older experimental preview at :4174 or 017's verified preview at :4175, when a guardian deliberately downloads the 019 branch's standalone Finder script, then it downloads the **019** cumulative development branch under `~/BrickWorld3D-preview-019`, uses `127.0.0.1:4176`, refuses root before downloading, never overwrites a preexisting directory, and does not migrate IndexedDB origins. This is a GitHub development snapshot, not a signed, cryptographically pinned release. Real Mac Finder first launch is a manual acceptance gate.
