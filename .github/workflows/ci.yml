@@ -1,0 +1,37 @@
+name: SDD + TDD quality gates
+on:
+  push:
+    branches: [main, JohnsonGarden-patch-1, 'feat/**']
+  pull_request:
+    branches: [main, JohnsonGarden-patch-1]
+permissions:
+  contents: read
+
+jobs:
+  spec-unit-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - run: npm run ci
+  chromium-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-failure-report
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 7
