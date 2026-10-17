@@ -40,6 +40,9 @@ A five-button, pointer-capture, two-finger press-and-hold UI for small coarse-po
 ## Phase M1f: frozen installs — 012 CI verified
 Committing a real registry-resolved `package-lock.json`, both GitHub Actions jobs switch to `npm ci` and npm tarball cache keyed by this lock. Mac launcher already uses `npm ci` whenever lockfile exists and refuses root before npm/Homebrew. Actions run https://github.com/JohnsonGarden/3D/actions/runs/39039886486 is green with 49 Node, 14 deploy and 16 Chromium tests using npm ci. Actual Mac fresh-install remains a separate manual gate. See [012 SDD](../specs/012-reproducible-install/spec.md).
 
+## Phase M1g: fictional junctions — 013 in development
+The first deterministic extension of the original corridor adds three four-way junctions with 7m paved width, 240m cross routes, road markings and curb cuts. A shared layout contract keeps fictional buildings clear of road pavement; instanced mesh renders building blocks and dashed lines. This finite road set is **not** actual Los Angeles GIS, world streaming, traffic control or collision physics. CI/test and real-device frame-rate gates remain distinct. See [013 SDD](../specs/013-fictional-streets/spec.md).
+
 ## Phase M2: satisfying driving and garage
 Rapier collision/contacts, suspension and wheel visuals, controller/touch, track reset, more robust vehicle asset review, richer multi-car management UX and metadata/provenance; basic manual GLB export added in M1d. Sound settings and audio accessibility. Aim for kid testing with timed first-drive/steer/recovery sessions.
 
