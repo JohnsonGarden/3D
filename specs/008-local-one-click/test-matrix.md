@@ -10,3 +10,6 @@
 | FR-006 | README and source links checked by reviewer | Parent succeeds from downloaded repo ZIP |
 
 RED gate intentionally fails until `scripts/serve-local.mjs` and `scripts/start-local.sh` exist. Never claim Linux CI is a Mac Finder UI test.
+
+## Automated evidence (2026-10-17)
+Commit `37f453fcb31402ee354324d9aad1072fc41efe20` CI: 39 Node vehicle tests, 6 deploy tests including shell syntax/Node preflight, local loopback static server, MIME/health/HEAD/invalid path/method, port collision and rejected invalid port, TypeScript build and SDD checker all passed. Link final Actions run after docs converge. macOS Finder opening remains intentionally unverified.

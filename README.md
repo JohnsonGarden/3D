@@ -4,6 +4,35 @@
 
 **状态：M0 工程基座 / 交互式技术原型。** 现在的彩色积木车是程序化占位模型；**不是**仓库中 HEIC 照片生成的数字孪生，也不是洛杉矶实景重建。
 
+## Mac 一键本地部署（建议使用）
+
+**适用于 MacBook Air / MacBook Pro 的 Apple Silicon 与 Intel Mac。**
+本功能在 GitHub Actions 的 Linux/Chromium 环境进行自动测试；Finder 双击和 Safari 仍需在你的 Mac 上验收。
+
+1. **下载含可运行代码的开发分支 ZIP**：[点击下载 3D 项目](https://github.com/JohnsonGarden/3D/archive/refs/heads/feat/lego-world-harness-v0.zip)。注意：目前默认 `main` 分支只有初始文件，不能用它来启动。
+2. 解压 ZIP，**保留整个文件夹**。进入文件夹，双击文件 **`启动积木世界.command`**（该文件不是图片，也不需要用编辑器打开）。
+3. 首次运行会检查 **Node.js >=22.12**、npm。如未安装，有 Homebrew 时脚本会**征得你同意**后安装 node@22；没有 Homebrew 则显示 Node.js 官方安装地址，安装后再次双击即可。
+4. 首次安装 npm 依赖需要联网；脚本自动构建网页，然后打开默认浏览器的 **http://127.0.0.1:4173**。保留 Terminal 窗口，游戏就会持续运行。之后启动会复用现有依赖，不强制重新下载。
+5. 停止：回到启动游戏的 Terminal 窗口按 **Control+C**。重新启动可以再次双击脚本。若端口上已有游戏，脚本会打开现有地址而不会杀死任何进程。
+
+如果 macOS 阻止打开未知开发者的 `.command` 文件，先按系统提示在 **系统设置 → 隐私与安全性**中选择允许打开；只运行你从本项目仓库下载、确认来源的文件。若 ZIP 解压未保留可执行权限，或者 Finder 不能打开，可以在该项目文件夹打开 Terminal，运行：
+
+```bash
+bash scripts/start-local.sh
+```
+
+高级操作与排错：
+
+```bash
+bash scripts/start-local.sh --check       # 只检查环境，不安装/构建
+bash scripts/start-local.sh --build-only  # 只安装依赖并构建
+bash scripts/start-local.sh --no-open     # 启动但不弹出浏览器
+BRICK_WORLD_PORT=4174 bash scripts/start-local.sh  # 本机端口 4173 被占用时
+npm run test:deploy                       # 在已经构建 dist 后运行部署专项测试
+```
+
+**隐私与安全：** 绑定 `127.0.0.1`，不提供公网/局域网访问，也没有后台上传照片或音乐的 API。上传的 GLB 和音乐继续由浏览器本地读取；不创建开机自启动服务，不需要 sudo。当前示例卡车是程序化模型，真实照片重建与永久车库属于后续工作。尚无 macOS 原生 `.app`、代码签名或 DMG 安装器，也尚未在用户 Mac 上验证帧率。
+
 ## 快速启动
 
 需要 Node.js 22.12+（建议 22 LTS），npm 10+。
@@ -22,7 +51,7 @@
 程序化四轴车现显示按轴位分布的 **14 条轮胎**，前两轴视觉转向、后两轴固定；车厢已移除，改为露出的低位车架与后平台。驾驶界面可切换 8×4 / 8×8、三把独立的逻辑差速锁，且在低附着路面示意条件下产生**有限的动力响应差别**，普通干燥铺装路切换模式不会无故提速。请注意这不是 Rapier 轮胎动力学或真实差速锁、悬挂仿真，导入的 GLB 模型暂不自动绑定轮胎骨骼。详见 [007 规格](specs/007-drivetrain-playable/spec.md)，[通过的 CI](https://github.com/JohnsonGarden/3D/actions/runs/39032367330)。
 
 ## 侧视校准阶段验收
-家长已阶段性确认 v3 侧视示意图的**外围尺寸与整体低趴姿态**，不要求现在打磨到照片级车身细节。实测车头 4.8cm，最低底盘离地 **0.3cm**（纠正旧值 0.6cm），无货厢，14 条胎，前两轴转向；8×4/8×8 驱动切换及 3 把差速锁是下一阶段设计输入，并**未在当前原型中模拟实现**。参见 [ADR-0002](docs/adr/0002-profile-baseline.md) 和 [配置参考](src/sim/approved-profile.ts)。
+家长已阶段性确认 v3 侧视示意图的**外围尺寸与整体低趴姿态**，不要求现在打磨到照片级车身细节。实测车头 4.8cm，最低底盘离地 **0.3cm**（纠正旧值 0.6cm），无货厢，14 条胎，前两轴转向；8×4/8×8 驱动切换及 3 把差速锁已完成**街机式控制与低附着示意**，尚未实现机械动力学仿真。参见 [ADR-0002](docs/adr/0002-profile-baseline.md) 和 [配置参考](src/sim/approved-profile.ts)。
 
 ## 从照片到世界
 

@@ -25,6 +25,9 @@ Evaluate six HEIC views; ask for any missing views and measured brick dimensions
 ## Phase M1a: child-friendly drivetrain controls — first slice shipped
 14-tire sample tractor with two steering axle stations, Q-switched 8×4 / 8×8, separate front/rear/center diff-lock buttons, a low-grip demonstration toggle and bounded deterministic motion. Interactive Chrome tests and build passed. **This is simplified gameplay logic**, not real four-axle physical drivetrain or suspension; a subsequent Rapier/terrain milestone is required.
 
+## Phase M1b: Mac one-click local launch
+`启动积木世界.command` performs Node/npm prerequisite checks (consent before Homebrew Node install), production build and opens a stdlib HTTP server on 127.0.0.1:4173. No remote service, no .app signing, no background daemon. Linux CI contract tests cover security, HTTP and shell syntax; Mac Finder smoke test is a manual gate. See [008 SDD](../specs/008-local-one-click/spec.md).
+
 ## Phase M2: satisfying driving and garage
 Rapier collision/contacts, suspension and wheel visuals, controller/touch, track reset, car slots and persisted locally approved models. Sound settings and audio accessibility. Aim for kid testing with timed first-drive/steer/recovery sessions.
 
