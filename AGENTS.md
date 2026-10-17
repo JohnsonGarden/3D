@@ -29,6 +29,7 @@ Applies to Codex, Claude Code, Copilot and other agents. READ THIS FIRST.
 - No copied copyrighted 3D maps, trademark claims, or commercially incompatible assets. Maintain attribution manifest as assets arrive.
 - Don't change base/raw-photo branches without user-approved integration; work on feature branches, PR to photo branch initially.
 - Do not 'fix' flaky tests by skipping them. If WebGL is unavailable in CI, test user-visible fallback and report rendering checks as manual/pending.
+- Driving slice 007: 14 tires visual, two front axles visual steer, default 8×4 (rear A3/A4 powered), optional 8×8; diff-lock logical toggles front/rear/center, Q/1/2/3/T. Low-grip coefficient is a toy demo, **not** realistic tire force, suspension, traction, or gear torque. Imported GLB remains not wheel-rigged.
 - Avoid fake claims: prototype garage ≠ persistent garage; placeholder brick car ≠ reconstructed car; stylized city ≠ GIS-faithful LA.
 
 ## Where to work

@@ -10,3 +10,6 @@
 | FR-006 | `npm run ci` and Chromium Github Actions | CI evidence URL and screenshot artifact; real Mac FPS later |
 
 RED before runtime code: `src/sim/drivetrain.test.ts` intentionally requires a missing module. A failing run is useful only until the implementation is committed; not a release state.
+
+## Convergence evidence — 2026-10-17
+Commit `99d44c53bb0c9799ebb04f0152904f011d2fcdb5` CI https://github.com/JohnsonGarden/3D/actions/runs/39032367330: 39 unit tests, 7 Chromium E2E tests, spec validator and production typecheck/build all green. Browser screenshot artifact `playable-browser-evidence` includes a visibly open-chassis tractor with new drivetrain control panel. User-uploaded GLB geometry is not rigged by these controls and imported-assets tests are separate. Steering yaw reversal was corrected to align Three.js -Z-forward mesh direction with simulator +X-right steering.

@@ -1,6 +1,6 @@
 # 007 — Interactive 8×4 / 8×8 and double-front-axle steering (M1)
 
-Status: agreed scope; implementation follows RED → GREEN → GitHub Actions convergence.
+Status: implemented arcade drivetrain vertical slice; automated tests and Chromium screenshot green 2026-10-17. Real physics, child usability and imported-GLB wheel rigging remain open.
 
 ## Goal
 A child can drive the four-axle brick tractor, see 14 tires and the first two axle sets steering, toggle 8×4/8×8, and independently engage 3 differential-lock *control states* without mistaking the browser toy for mechanical drivetrain simulation.

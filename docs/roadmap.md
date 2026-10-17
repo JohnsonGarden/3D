@@ -22,6 +22,9 @@ A first truck was measured at 10.4cm body length **excluding front bumper**, 3.1
 ## Phase M1: first authentic car
 Evaluate six HEIC views; ask for any missing views and measured brick dimensions. Produce approved GLB with three options: manually reconstructed LDraw/CAD (preferred when brick-accurate), conventional multi-view mesh, AI-assisted draft then manual repair. Side-by-side photo fidelity review, stable center, wheel alignment, parts/provenance data.
 
+## Phase M1a: child-friendly drivetrain controls — first slice shipped
+14-tire sample tractor with two steering axle stations, Q-switched 8×4 / 8×8, separate front/rear/center diff-lock buttons, a low-grip demonstration toggle and bounded deterministic motion. Interactive Chrome tests and build passed. **This is simplified gameplay logic**, not real four-axle physical drivetrain or suspension; a subsequent Rapier/terrain milestone is required.
+
 ## Phase M2: satisfying driving and garage
 Rapier collision/contacts, suspension and wheel visuals, controller/touch, track reset, car slots and persisted locally approved models. Sound settings and audio accessibility. Aim for kid testing with timed first-drive/steer/recovery sessions.
 
