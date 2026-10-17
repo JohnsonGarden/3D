@@ -15,3 +15,6 @@ Existing code hardcodes passenger-car prototype (length 3.6 m, width 1.8 m), and
 - Prototype now renders truck-sized cab, frame and wheels; geometry remains artistic placeholder.
 - User GLBs scale only by X-axis bounding width and are checked for positive nondegenerate dimensions; parent must review roof/bumper/forward-axis alignment.
 - Garage reveals all four calibrated physical dimensions, scale factor and bumper exclusion.
+
+### Automated evidence — GREEN
+At commit `a08b6467c9cd0241958470878a29160f8197c234`, https://github.com/JohnsonGarden/3D/actions/runs/39028274592 reports 22 Node tests passed, 4 Chromium tests passed, TypeScript/Vite build passed. Browser artifact contains a rendering screenshot. Parent/child playtest and actual GLB-to-photo geometry comparison are NOT complete.
