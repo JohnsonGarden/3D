@@ -165,3 +165,27 @@ footer { color:#8498b4; text-align:center; font-size:11px; padding:10px; }
   .performance-panel p,.performance-panel > strong { font-size:10px; }
   .performance-values b { font-size:11px; }
 }
+
+
+/* First playable road-trip progression: no account, no GPS, no telemetry. */
+.journey-strip {
+  background:#203149; color:#ebf5ff; display:flex; align-items:center;
+  gap:18px; padding:10px clamp(14px,3vw,48px); border-top:1px solid #3a506a;
+  border-bottom:1px solid #506a7c; flex-wrap:wrap;
+}
+.journey-progress { min-width:170px; }
+.journey-progress strong { display:block; font-size:13px; }
+.journey-progress strong span { color:#ffdb83; margin-left:12px; font-variant-numeric:tabular-nums; }
+.journey-progress small { display:block; color:#b9ccdd; font-size:11px; margin-top:3px; }
+.journey-dots { display:flex; gap:7px; margin:auto; }
+.journey-dots span { width:12px; height:12px; border:2px solid #89a4b6; border-radius:50%; background:transparent; }
+.journey-dots span.done { background:#ffd66d; border-color:#ffd66d; }
+.journey-strip button { flex:0 0 auto; font-size:12px; font-weight:700;
+  color:#f8f6df; background:#36536b; border:1px solid #8aa9bd;
+  border-radius:8px; padding:9px 12px; }
+@media(max-width:620px){
+ .journey-strip { gap:7px; padding:9px 12px; }
+ .journey-progress { min-width:150px; flex:1; }
+ .journey-dots { margin:0 8px; }
+ .journey-strip button { font-size:11px; }
+}
