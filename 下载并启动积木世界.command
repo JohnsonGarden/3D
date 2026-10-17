@@ -4,8 +4,8 @@
 set -Eeuo pipefail
 export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 
-HOME_DIR="${BRICK_WORLD_HOME:-$HOME/BrickWorld3D}"
-ARCHIVE_URL="https://github.com/JohnsonGarden/3D/archive/refs/heads/feat/lego-world-harness-v0.zip"
+HOME_DIR="${BRICK_WORLD_HOME:-$HOME/BrickWorld3D-preview}"
+ARCHIVE_URL="https://github.com/JohnsonGarden/3D/archive/refs/heads/feat/014-roadtrip-checkpoints.zip"
 
 # Abort BEFORE download, mkdir, or reuse of an old installed script.
 # Standalone bootstrap intentionally does not depend on adjacent project files.
@@ -21,8 +21,8 @@ fi
 
 if [[ -d "$HOME_DIR" && -f "$HOME_DIR/package.json" &&
       -f "$HOME_DIR/scripts/start-local.sh" ]]; then
-  echo "找到已安装的积木世界：$HOME_DIR"
-  echo "直接启动现有版本；不会自动覆盖或删除你的代码和文件。"
+  echo "找到已安装的积木世界预览目录：$HOME_DIR"
+  echo "直接启动已有预览；为保护本地文件不会自动更新或覆盖代码。" 
 elif [[ -e "$HOME_DIR" ]]; then
   echo "安装路径已存在，但不是有效的积木世界工程：$HOME_DIR" >&2
   echo "为保护现有文件，本次不会覆盖。请改用 BRICK_WORLD_HOME 指定新目录。" >&2
@@ -59,6 +59,10 @@ else
   trap - EXIT
 fi
 
-/bin/bash "$HOME_DIR/scripts/start-local.sh" "$@"
-exit_code=$?
-exit "$exit_code"
+echo "预览默认仅在 127.0.0.1:4174 运行；它与旧版 :4173 的浏览器车库互不共享。"
+echo "请在两个版本间手动导出/导入 GLB，不会迁移或覆盖已有数据。"
+if BRICK_WORLD_PORT="${BRICK_WORLD_PORT:-4174}" /bin/bash "$HOME_DIR/scripts/start-local.sh" "$@"; then
+  exit 0
+else
+  exit $?
+fi

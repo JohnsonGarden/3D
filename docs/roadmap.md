@@ -71,3 +71,7 @@ A 300-frame bounded RAF interval window reports median FPS and p95 ms at <=1Hz w
 
 ## Phase M2c: three visible road-trip markers — 014
 A simple fictional road game loop: three in-world colored gates with pure segment-crossing scoring, progress UI, and explicit journey restart. Improves child motivation and gives a deterministic acceptance path for future chunked neighborhoods. Progress stays session-local; not a road graph, licensed LA city reconstruction or savegame system. See [014 SDD](../specs/014-roadtrip-checkpoints/spec.md).
+
+
+## Phase M2d: isolated cumulative preview launcher — 015
+Reuses the already executable one-click .command on the preview branch, pins the 014 cumulative verified gameplay source and installs under ~/BrickWorld3D-preview by default, with loopback port 4174. Original install and its :4173 IndexedDB origin are untouched. Existing preview files are reused without auto-overwrite. This is not a signed .app or an auto-updater; Mac Finder/security and first real-network installation require manual acceptance. See [015 SDD](../specs/015-safe-preview-installer/spec.md).
