@@ -409,7 +409,7 @@ export default function App() {
               <strong>我的本地车辆</strong>
               <small>{garageEntries.length}/{GARAGE_LIMIT} 个保存位</small>
             </div>
-            <p className="garage-local-notice">仅保存在当前浏览器 · 不上传云端。请逐辆点击“导出 GLB”手动备份到安全位置；更换浏览器、端口或清理数据都可能失去车库记录。备份文件可重新导入。</p>
+            <p className="garage-local-notice">已保存在本机浏览器 · 不上传云端。请逐辆点击“导出 GLB”手动备份到安全位置；更换浏览器、端口或清理数据都可能失去车库记录。备份文件可重新导入。</p>
             {!garageReady && <p role="status">正在读取本地车库...</p>}
             <div className="garage-entry">
               <button type="button" aria-label="选择程序化示例车"
