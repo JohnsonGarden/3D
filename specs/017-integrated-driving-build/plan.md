@@ -11,3 +11,6 @@ Carry only the necessary parts of two sibling forks 012-reproducible-install and
 
 ## TDD / gates
 Create 017 tests/contract and bring 013 fork's own unit/E2E tests into branch first; then port. Confirm old collision assumptions around 42 solids become range/geometry invariant without weakening bumper/reverse assertions. Run actual same-branch Actions. Future true georeferenced city data remains a separate program.
+
+## Safe preview variant
+Adapt only the 015 existing standalone bootstrapping constants on 017 branch: source archive 017, home suffix -017 and port 4175. Existing :4173 and :4174 are preserved. Continue root guard, parent-directory-safety and no code overwrite semantics. Update original launcher tests to this cumulative development branch; the historical 015 branch retains its old archive/port.
