@@ -16,6 +16,9 @@ One procedural brick car, roads and buildings, camera, keyboard driving and brak
 ## Parent measurement update (2026-10-17)
 A first truck was measured at 10.4cm body length **excluding front bumper**, 3.1cm width, 4.7cm highest front point, 1.4cm tire diameter. We target 2.50m in-world truck width: exact scale 80.645×, body 8.387m, cab 3.790m, tire 1.129m; front bumper adds 0.8cm toy / 0.645m game, total longitudinal reference 9.032m. Axle 1 is 2.4cm behind body front, then gaps 3.2/1.6/1.6cm and axle 4-to-tail 1.6cm; first-to-last span 5.161m. Four-axle renderer now uses these longitudinal measurements. See specs/006-proportional-truck-scale.
 
+## v3 parent review gate (2026-10-17)
+**External dimensions and overall low-slung stance APPROVED FOR DEVELOPMENT, not final art approval.** Cabin length 4.8cm; chassis ground clearance revised to 0.3cm; no cargo container; 14 tires on four axles. 8×4/8×8 front-drive coupling and three diff locks confirmed. See [ADR-0002](adr/0002-profile-baseline.md). Don't block engine/garage/world progress on tiny cab contour refinements or claim the current procedural truck faithfully reproduces the HEIC model.
+
 ## Phase M1: first authentic car
 Evaluate six HEIC views; ask for any missing views and measured brick dimensions. Produce approved GLB with three options: manually reconstructed LDraw/CAD (preferred when brick-accurate), conventional multi-view mesh, AI-assisted draft then manual repair. Side-by-side photo fidelity review, stable center, wheel alignment, parts/provenance data.
 

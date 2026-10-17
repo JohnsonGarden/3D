@@ -5,6 +5,9 @@ Status: parent measurements accepted (2026-10-17); four-axle procedural implemen
 ## Story
 As a child, I want my actual 10.4 cm long, 3.1 cm wide brick truck to become a giant drivable 3D truck, so that it looks the same and drives on roads/buildings sized like the real world.
 
+## Visual baseline approval status (2026-10-17)
+Parent reviewed the v3 side-profile HTML and accepted **overall external dimensions and low-slung stance for continued development**. Cab/body shapes and LEGO part-level identity are explicitly **not final**; further silhouette micro-iterations are deferred rather than blocking development. ADR: [0002](../../docs/adr/0002-profile-baseline.md).
+
 ## Source-of-truth measurements
 - Body length excluding front bumper: 10.4 cm.
 - Maximum body width: 3.1 cm.
@@ -21,6 +24,17 @@ As a child, I want my actual 10.4 cm long, 3.1 cm wide brick truck to become a g
 - Assumption: distances refer to axle **center lines**; unmeasured tire lateral offset, steering axles, wheel count per axle, wheel contact patches and front bumper height are visual/physics TODOs.
 - Road lane nominal = 3.5 m. A width of 2.50 m leaves 0.50 m per side only when exactly centered in the lane.
 - Geometry units: meter (Y up; front is -Z). Parents may revise measurements in future versions with a dated calibration entry.
+
+## Additional measured profile and drivetrain reference (target specification; not yet runtime implementation)
+- **Ground clearance beneath chassis: 0.3cm**, replacing outdated 0.6cm. World reference 0.24194m.
+- Cabin length: **4.8cm** without front bumper; game 3.87097m. No cargo container or trailer.
+- Tire top to square wheel arch opening: **0.1cm** (0.08065m in game); square arch opening longitudinal width **1.6cm** (1.29032m). The earlier 1.5cm wheel-arch measurement was ambiguous; v3 interpreted it as wheel-arch top 1.5cm above ground. Review at authentic mesh stage, do not assign extra geometry certainty.
+- Rear curved roof fairing: 1.6cm long, 0.6cm high, with a central flat roof and a front downward fairing. v3 HTML's three 1.6cm longitudinal segments are a **working geometric interpretation**, not final parent-approved surfaces.
+- **Tires: 14 physical tires total:** axle 1 single per side = 2, axles 2/3/4 dual per side = 4 each.
+- **Front two axles steer**; rear two axles do not.
+- Drive modes: **8×4** means axles 3–4 powered, **8×8** means axles 1–4 powered. Switching the front two axle drive engagement is supported in design, not yet simulated.
+- Three toggled diff locks: **front axle group, rear axle group, central**. Control semantics confirmed; independent tire traction and differential equations are future work.
+- This supplemental contract is encoded in `src/sim/approved-profile.ts`; real R3F mesh/physics will be changed in a later feature packet. Do not confuse config with runtime capability.
 
 ## Functional requirements
 ### FR-001 Scale only from observed width

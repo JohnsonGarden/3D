@@ -13,6 +13,8 @@ Do not overwrite originals or treat a file list as an actual visual quality audi
 - Front bumper maximum protrusion beyond body front: **0.8cm** (game **0.645m**); bumper height unmeasured
 - Width-calibrated in-world size: 2.50 m × 8.387 m × 3.790 m; wheel diameter 1.129 m, scale 80.645×; single isotropic multiplier. Overall front-bumper-included length = **9.032m**, subject to verifying other rear appendages.
 - Four axle centerlines: first 2.4cm from body front, subsequent spacings 3.2 / 1.6 / 1.6cm, fourth 1.6cm before body rear. Sum **2.4+3.2+1.6+1.6+1.6=10.4cm**. Positions from body front game: 1.9355 / 4.5161 / 5.8065 / 7.0968m; first-to-last span 5.1613m. Assumes tape measures axle centerlines.
+- Latest approved-for-progress silhouette: no cargo box; cabin 4.8cm, chassis minimum clearance **0.3cm** (replaces 0.6cm), square arches 1.6cm with tire-top clearance 0.1cm; 14 tires across 4 axle stations. Rear fairing 1.6cm long, 0.6cm tall; three-segment roof curve inferred by v3 HTML pending photo review. Modes 8×4/8×8 and three locks (front/rear/center) accepted for game design, not simulated yet.
+- Detailed photo likeness remains pending; parent explicitly permits the engine/world/garage work to continue before final micro-shape polishing. See [ADR-0002](adr/0002-profile-baseline.md).
 - Imported GLB preliminary bbox-X calibration only; final asset should use named body-width landmarks so mirrors/side wheels don't distort the reference. See specs/006-proportional-truck-scale.
 
 ## Capture protocol
