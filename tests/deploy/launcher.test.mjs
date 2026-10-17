@@ -35,7 +35,7 @@ test('standalone downloader is executable, syntax valid and points to HTTPS GitH
   assert.ok(statSync(bootstrap).mode & 0o111)
   execFileSync('/bin/bash',['-n',bootstrap],{stdio:'pipe'})
   const contents = readFileSync(bootstrap,'utf8')
-  assert.match(contents,/https:\/\/github\.com\/JohnsonGarden\/3D\/archive\/refs\/heads\/feat\/014-roadtrip-checkpoints\.zip/)
+  assert.match(contents,/https:\/\/github\.com\/JohnsonGarden\/3D\/archive\/refs\/heads\/feat\/017-integrate-branches\.zip/)
   assert.doesNotMatch(contents,/curl[^\n]*\|\s*bash|sudo |killall /)
 })
 
