@@ -3,7 +3,7 @@ on:
   push:
     branches: [main, JohnsonGarden-patch-1, 'feat/**']
   pull_request:
-    branches: [main, JohnsonGarden-patch-1]
+    branches: [main, JohnsonGarden-patch-1, 'feat/**']
 permissions:
   contents: read
 

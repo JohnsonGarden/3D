@@ -95,6 +95,7 @@ footer { color:#8498b4; text-align:center; font-size:11px; padding:10px; }
 .garage-entry button[aria-pressed="true"] { border-color:#3c7795; background:#d0e3ed; font-weight:750; }
 .garage-entry button:disabled { opacity:.55; cursor:wait; }
 .garage-entry button small { display:block; color:#6d7d8d; font-size:10px; margin-top:3px; }
+.garage-entry .garage-export { flex:0 0 auto; white-space:nowrap; color:#195e55; border-color:#a9cec8; background:#e9f7f2; }
 .garage-entry .garage-delete { flex:0 0 auto; color:#8d3240; border-color:#e8bbc0; }
 .garage-confirm { border:1px solid #cf9ba2; background:#fff3f3; padding:13px; border-radius:12px; margin:12px 0; }
 .garage-confirm p { color:#702631; font-size:12px; line-height:1.5; }

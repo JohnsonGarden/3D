@@ -31,8 +31,11 @@ Evaluate six HEIC views; ask for any missing views and measured brick dimensions
 ## Phase M1c: local persistent garage — 009 delivered
 Validated user-imported GLB bytes and metadata in 6-slot IndexedDB; active vehicle can restore after reload, sample fallback and delete confirmation supported. No cloud upload or actual photo reconstruction; browser privacy mode, quotas, cross-origin ports and manual backup limitations documented. Pending actual Mac/Safari test.
 
+## Phase M1d: manual garage backup — 010 CI validated
+Per-car explicit GLB export provides byte-for-byte original-file download without network upload or IndexedDB mutation. Each GLB must be manually backed up outside the browser and re-imported when needed; the feature is not cloud sync, whole-garage ZIP, or durable browser storage. GitHub Actions passed 46 Node, 11 deploy and 14 Chromium tests; Mac/Safari manual download still needs validation. See [010 SDD](../specs/010-garage-export/spec.md).
+
 ## Phase M2: satisfying driving and garage
-Rapier collision/contacts, suspension and wheel visuals, controller/touch, track reset, more robust vehicle asset review, manual GLB export/backup, and multi-car management UX. Sound settings and audio accessibility. Aim for kid testing with timed first-drive/steer/recovery sessions.
+Rapier collision/contacts, suspension and wheel visuals, controller/touch, track reset, more robust vehicle asset review, richer multi-car management UX and metadata/provenance; basic manual GLB export added in M1d. Sound settings and audio accessibility. Aim for kid testing with timed first-drive/steer/recovery sessions.
 
 ## Phase M3: Los Angeles-inspired open world
 Progressive, chunked neighborhoods: road geometry, traffic signals, junctions, scenery, coastal/suburban road, day/night. Real LA road import is separate GIS/licensing subproject; attribution and ODbL must be satisfied before using OSM data. No unlicensed textures/Google 3D tiles.
