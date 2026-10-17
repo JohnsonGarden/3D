@@ -6,6 +6,11 @@ import World from './world/World.tsx'
 import { validateGlbBytes } from './sim/glb-guard.ts'
 import { TRUCK_DIMENSIONS, scaleImportedModelByWidth } from './sim/truck-scale.ts'
 import type { DriverInput } from './sim/vehicle.ts'
+import {
+  INITIAL_DRIVETRAIN, drivetrainReducer, tractionCoefficient, poweredAxles
+} from './sim/drivetrain.ts'
+import type { DiffLock, DrivetrainAction } from './sim/drivetrain.ts'
+import { APPROVED_PROFILE_M } from './sim/approved-profile.ts'
 
 const MAX_GLB = 20 * 1024 * 1024
 const MAX_AUDIO = 30 * 1024 * 1024
@@ -30,6 +35,12 @@ export default function App() {
   const [garageOpen, setGarageOpen] = useState(false)
   const [resetCount, setResetCount] = useState(0)
   const [speed, setSpeed] = useState(0)
+  const [drivetrain, setDrivetrain] = useState(INITIAL_DRIVETRAIN)
+  const drivetrainRef = useRef(INITIAL_DRIVETRAIN)
+  drivetrainRef.current = drivetrain
+  const dispatchDrivetrain = useCallback((action: DrivetrainAction) => {
+    setDrivetrain(current => drivetrainReducer(current, action))
+  }, [])
   const [model, setModel] = useState<Object3D | null>(null)
   const [modelName, setModelName] = useState('阳光积木小车 · 示例模型')
   const [musicUrl, setMusicUrl] = useState<string | null>(null)
@@ -62,6 +73,16 @@ export default function App() {
         setResetCount(value => value + 1)
         return
       }
+      if (!garageOpen && !event.repeat && ['q', '1', '2', '3', 't'].includes(key)) {
+        event.preventDefault()
+        if (key === 'q') dispatchDrivetrain({type: 'toggle-drive'})
+        else if (key === 't') dispatchDrivetrain({type: 'toggle-surface'})
+        else {
+          const lock = ({ '1': 'front', '2': 'rear', '3': 'center' } as const)[key as '1'|'2'|'3']
+          dispatchDrivetrain({type: 'toggle-lock', lock})
+        }
+        return
+      }
       if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(key)) {
         event.preventDefault()
         keys.current.add(key)
@@ -81,7 +102,7 @@ export default function App() {
       window.removeEventListener('keyup', up)
       window.removeEventListener('blur', blur)
     }
-  }, [updateControls])
+  }, [updateControls, garageOpen, dispatchDrivetrain])
 
   // URL belongs to the browser session, and is revoked on replacement / unmount.
   useEffect(() => () => {
@@ -160,7 +181,7 @@ export default function App() {
 
       <div className="world-stage">
         {webgl ?
-          <World controls={controls} garageOpen={garageOpen} resetCount={resetCount}
+          <World controls={controls} drivetrain={drivetrainRef} garageOpen={garageOpen} resetCount={resetCount}
             model={model} onSpeed={setSpeed} />
           : <div role="alert" className="fallback">
               当前浏览器无法启动 WebGL 2。请开启硬件加速并更新浏览器，或换一台支持 3D 图形的电脑。
@@ -171,11 +192,51 @@ export default function App() {
           <p className="model-label">{modelName}</p>
           <button onClick={() => setResetCount(n => n + 1)}>重置车辆 <span className="keycap">R</span></button>
         </section>
+        <section className="drivetrain-panel" aria-label="传动系统">
+          <div className="drivetrain-panel-head">
+            <span>四轴传动</span>
+            <span className="drivetrain-tag">驾驶演示</span>
+          </div>
+          <button className="drive-mode-toggle" type="button"
+            aria-label="切换驱动模式" aria-pressed={drivetrain.mode === '8x8'}
+            onClick={() => dispatchDrivetrain({type:'toggle-drive'})}>
+            <span>驱动模式 <kbd>Q</kbd></span>
+            <strong>{drivetrain.mode === '8x8' ? '8×8 全轮驱动' : '8×4 后双桥驱动'}</strong>
+          </button>
+          <p className="powered-axles">驱动轴：{poweredAxles(drivetrain).join(' · ')}　/　4 轴</p>
+          <div className="lock-grid" aria-label="差速锁开关">
+            {([
+              ['front', '前桥组', '1'],
+              ['rear', '后桥组', '2'],
+              ['center', '中央', '3']
+            ] as [DiffLock, string, string][]).map(([lock, label, key]) => (
+              <button key={lock} className={drivetrain.locks[lock] ? 'lock-active' : ''}
+                type="button" aria-label={'差速锁：' + label}
+                aria-pressed={drivetrain.locks[lock]}
+                onClick={() => dispatchDrivetrain({type:'toggle-lock',lock})}>
+                <small>{label} <kbd>{key}</kbd></small>
+                <strong>{drivetrain.locks[lock] ? '锁止' : '解锁'}</strong>
+              </button>
+            ))}
+          </div>
+          <button className="surface-toggle" type="button"
+            aria-label="切换路面附着力" aria-pressed={drivetrain.surface === 'loose'}
+            onClick={() => dispatchDrivetrain({type:'toggle-surface'})}>
+            <span>路况演示 <kbd>T</kbd></span>
+            <strong>{drivetrain.surface === 'paved' ? '铺装公路' : '低附着路面'}</strong>
+          </button>
+          <p className="grip-label">演示抓地系数 {(tractionCoefficient(drivetrain)*100).toFixed(0)}%</p>
+          <p className="drivetrain-disclaimer">
+            示意驾驶模型：切换驱动与差速锁影响低附着路面抓地估算，
+            不代表真实差速器、轮胎受力或悬架仿真。
+          </p>
+        </section>
         <aside className="controls-help" aria-label="驾驶操作说明">
           <span><kbd>W</kbd> / <kbd>↑</kbd> 前进</span>
           <span><kbd>S</kbd> / <kbd>↓</kbd> 倒车</span>
           <span><kbd>A</kbd><kbd>D</kbd> / ← → 转向</span>
           <span><kbd>Space</kbd> 刹车</span>
+          <span><kbd>Q</kbd> 驱动切换 · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 差速锁 · <kbd>T</kbd> 低附着路面</span>
         </aside>
       </div>
 
@@ -201,6 +262,8 @@ export default function App() {
               <div><dt>前防撞梁向前突出</dt><dd>{TRUCK_DIMENSIONS.frontBumperProjectionM.toFixed(2)} m</dd></div>
               <div><dt>总长（含前防撞梁）</dt><dd>{TRUCK_DIMENSIONS.totalLengthWithBumperM.toFixed(2)} m</dd></div>
               <div><dt>第一至第四轴轴距</dt><dd>{TRUCK_DIMENSIONS.firstToFourthAxleM.toFixed(2)} m</dd></div>
+              <div><dt>底盘离地</dt><dd>{APPROVED_PROFILE_M.chassisGroundClearance.toFixed(2)} m</dd></div>
+              <div><dt>轮胎总数（设计目标）</dt><dd>14 条</dd></div>
               <div><dt>轴距 1–2 / 2–3 / 3–4</dt><dd>{TRUCK_DIMENSIONS.axleSpacingM.map(x => x.toFixed(2)).join(' / ')} m</dd></div>
             </dl>
           </div>

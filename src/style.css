@@ -55,3 +55,30 @@ footer { color:#8498b4; text-align:center; font-size:11px; padding:10px; }
 .calibration dl div { display:flex; justify-content:space-between; gap:10px; padding:6px 0; border-top:1px solid #c8d3d8; }
 .calibration dt { color:#3e5369; font-size:12px; }
 .calibration dd { font-weight:750; white-space:nowrap; font-variant-numeric:tabular-nums; margin:0; font-size:12px; }
+
+/* Drivetrain controller — distinguish arcade state from mechanically realistic physics. */
+.drivetrain-panel {
+  position:absolute; right:24px; top:212px; width:274px;
+  background:#122139e9; color:#eaf4ff; padding:13px;
+  border:1px solid #91aed83d; border-radius:14px;
+  box-shadow:0 15px 40px #06101b55; backdrop-filter:blur(12px);
+}
+.drivetrain-panel-head { display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:800; margin-bottom:10px; }
+.drivetrain-tag { font-weight:550; font-size:10px; color:#e7c378; background:#e1ad3429; padding:4px 7px; border-radius:99px; }
+.drivetrain-panel button { border:1px solid #7289a86b; color:#edf7ff; background:#223c59; border-radius:9px; padding:9px; text-align:left; }
+.drivetrain-panel button:hover { border-color:#d0d9eb; }
+.drive-mode-toggle,.surface-toggle { display:flex; width:100%; justify-content:space-between; align-items:center; gap:8px; }
+.drive-mode-toggle span,.surface-toggle span { color:#b2c7df; font-size:11px; }
+.drive-mode-toggle strong,.surface-toggle strong { font-size:12px; }
+.drivetrain-panel kbd { font-size:10px; margin-left:3px; }
+.powered-axles,.grip-label { font-size:11px; color:#b9d0ec; margin:7px 0 10px; }
+.lock-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:9px 0; }
+.lock-grid button { min-width:0; display:flex; flex-direction:column; align-items:center; gap:5px; text-align:center; }
+.lock-grid small { font-size:10px; white-space:nowrap; }
+.lock-grid strong { font-size:12px; }
+.drivetrain-panel button[aria-pressed="true"] { background:#315b52; border-color:#68c6ad; }
+.drivetrain-disclaimer { margin:8px 0 0; color:#adc3df; font-size:10px; line-height:1.55; }
+@media(max-width:800px){
+ .drivetrain-panel { right:10px; top:173px; width:min(258px,calc(100vw - 20px)); padding:10px; }
+ .drivetrain-disclaimer { display:none; }
+}

@@ -6,9 +6,12 @@ import { scaleImportedModelByWidth, TRUCK_DIMENSIONS } from '../sim/truck-scale.
 import { advanceVehicle, INITIAL_VEHICLE, VEHICLE, speedKmh } from '../sim/vehicle.ts'
 import type { DriverInput, VehicleState } from '../sim/vehicle.ts'
 import { tickFixed } from '../sim/fixed-step.ts'
+import { axleSteerAngles } from '../sim/drivetrain.ts'
+import type { DrivetrainState } from '../sim/drivetrain.ts'
 
 type WorldProps = {
   controls: MutableRefObject<DriverInput>
+  drivetrain: MutableRefObject<DrivetrainState>
   garageOpen: boolean
   resetCount: number
   model: Object3D | null
@@ -17,9 +20,9 @@ type WorldProps = {
 
 const CITY_COLORS = ['#839bb5', '#b3a594', '#8ea6ab', '#a7ae98', '#c6a8a0']
 
-function BrickCar() {
+function BrickCar({ wheelStations }: { wheelStations: MutableRefObject<Record<string, Group | null>> }) {
   // Procedural sample only — not reconstructed from the six HEIC images.
-  // External body dimensions are calibrated; wheelbase is a visual placeholder.
+  // Axle stations are measured. Twin tires are now shown, but no force solver exists.
   const radius = VEHICLE.wheelDiameter / 2
   const halfLength = VEHICLE.length / 2
   const cabRoof = VEHICLE.height - 0.12
@@ -67,13 +70,20 @@ function BrickCar() {
           </mesh>
         ))
       )}
+      {/* Real measured axle stations. A1 single each side; A2–A4 twin each side: 14 tires. */}
       {[-1, 1].flatMap(side => TRUCK_DIMENSIONS.axleLocalZFromBodyCenterM.map((axleZ, index) => (
-        <mesh key={'wheel' + side + ':' + index}
-          position={[side * (VEHICLE.width / 2 - 0.16), radius, axleZ]}
-          rotation={[0, 0, Math.PI / 2]} castShadow>
-          <cylinderGeometry args={[radius, radius, 0.32, 24]} />
-          <meshStandardMaterial color="#232b37" roughness={0.8} />
-        </mesh>
+        <group key={'axle-station-' + side + '-' + index}
+          ref={node => { wheelStations.current[side + ':' + index] = node }}
+          position={[side * (VEHICLE.width / 2 - 0.28), radius, axleZ]}>
+          {(index === 0 ? [0.13] : [0.13, -0.16]).map((xOffset, tireIndex) => (
+            <mesh key={'tire-' + tireIndex}
+              position={[side * xOffset, 0, 0]}
+              rotation={[0, 0, Math.PI / 2]} castShadow>
+              <cylinderGeometry args={[radius, radius, 0.27, 24]} />
+              <meshStandardMaterial color="#232b37" roughness={0.8} />
+            </mesh>
+          ))}
+        </group>
       )))}
       {/* Measured forward bumper extension; bumper HEIGHT remains artistic. */}
       <mesh position={[0, 0.99, -halfLength - TRUCK_DIMENSIONS.frontBumperProjectionM / 2]} castShadow>
@@ -165,8 +175,9 @@ function RoadsAndBuildings() {
   )
 }
 
-function DrivingScene({ controls, garageOpen, resetCount, model, onSpeed }: WorldProps) {
+function DrivingScene({ controls, drivetrain, garageOpen, resetCount, model, onSpeed }: WorldProps) {
   const car = useRef<Group>(null)
+  const wheelStations = useRef<Record<string, Group | null>>({})
   const vehicle = useRef<VehicleState>({ ...INITIAL_VEHICLE })
   const accumulated = useRef(0)
   const hudClock = useRef(0)
@@ -186,7 +197,7 @@ function DrivingScene({ controls, garageOpen, resetCount, model, onSpeed }: Worl
       accumulated.current = tickFixed(
         accumulated.current, dt, VEHICLE.fixedStep, 6,
         () => {
-          vehicle.current = advanceVehicle(vehicle.current, controls.current, VEHICLE.fixedStep)
+          vehicle.current = advanceVehicle(vehicle.current, controls.current, VEHICLE.fixedStep, drivetrain.current)
         }
       )
     } else {
@@ -195,7 +206,15 @@ function DrivingScene({ controls, garageOpen, resetCount, model, onSpeed }: Worl
     const s = vehicle.current
     if (car.current) {
       car.current.position.set(s.x, 0, s.z)
-      car.current.rotation.y = s.heading
+      // Three.js +Y yaw rotates -Z toward -X. Simulation positive heading goes +X.
+      car.current.rotation.y = -s.heading
+    }
+    const frontAngles = axleSteerAngles(garageOpen ? 0 : controls.current.steer)
+    for (const side of [-1, 1]) {
+      for (let i = 0; i < 4; i++) {
+        const station = wheelStations.current[side + ':' + i]
+        if (station) station.rotation.y = -frontAngles[i]
+      }
     }
     targetPos.current.set(
       s.x - Math.sin(s.heading) * 16.5 + Math.cos(s.heading) * 5.5,
@@ -219,7 +238,7 @@ function DrivingScene({ controls, garageOpen, resetCount, model, onSpeed }: Worl
       <hemisphereLight args={['#f9efe4', '#586751', 2.5]} />
       <directionalLight position={[16, 28, 18]} intensity={2.1} />
       <RoadsAndBuildings />
-      <group ref={car}>{model ? <ImportedCar model={model} /> : <BrickCar />}</group>
+      <group ref={car}>{model ? <ImportedCar model={model} /> : <BrickCar wheelStations={wheelStations} />}</group>
     </>
   )
 }
