@@ -1,9 +1,14 @@
 # 008 — One-click local install & launch, macOS first
 
-Status: scoped. Implement RED → GREEN → converge via GitHub Actions.
+Status: implemented and green on Linux GitHub Actions; standalone Mac bootstrap plus project-local launcher available. Mac Finder double-click verification pending.
 
 ## User goal
 As a parent on a MacBook Air, I can unpack the project's development-branch ZIP, double-click **启动积木世界.command**, and play without entering npm commands or exposing my children's assets over LAN.
+
+## User entry points
+- Project-local: `启动积木世界.command` (requires extracted repo ZIP).
+- Standalone first-install: `下载并启动积木世界.command` (fetches the public dev branch archive into `~/BrickWorld3D` once; on repeated runs reuses that folder; never overwrites unrelated files). Download script checks extracted source structure and does not execute curl response as shell text.
+- Both launchers require installed Node >=22.12/npm or explicitly approved Homebrew Node. Network required at first download/npm install, but no remote game service required once dependencies are cached.
 
 ## Functional requirements
 ### FR-001 Finder one-click launcher
