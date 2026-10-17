@@ -19,4 +19,9 @@
 - [x] T-009 [FR-007] Add RED test for effective UID 0 refusal and ordinary UID acceptance; check both entry paths guard before brew, curl and installs.
 - [x] T-010 [FR-007] Add shared project launcher guard and standalone self-contained root check with non-invasive repair guidance.
 - [x] T-011 [FR-006,FR-007] Document regular-user recovery and old installer reuse caveat.
-- [ ] T-012 [FR-005,FR-007] Verify hotfix through GitHub Actions and record evidence; Mac Finder confirmation remains pending.
+- [x] T-012 [FR-005,FR-007] Verify hotfix through GitHub Actions and record evidence; Mac Finder confirmation remains pending.
+
+### Root/homebrew hotfix gate — GREEN
+- GitHub Actions at `32938c213b7877fa4dca239c38a306c02d07433e`: https://github.com/JohnsonGarden/3D/actions/runs/39036181217
+- Checks pass: 43 Node simulation/storage tests, **11** deployment tests (including pure simulated effective UID 0 reject & UID 501 accept, early guard placement in both launchers), 12 Chromium E2E, TS/Vite build, 5 SDD packets. Both CI jobs success.
+- Manual Mac reproduction of original root error and successful Finder retry from non-root user still not completed; T-008 stays pending.

@@ -21,3 +21,6 @@ GitHub https://github.com/JohnsonGarden/3D/actions/runs/39033643766 at commit `0
 - Pure shell test sources `scripts/require-normal-user.sh`, invokes `require_normal_user 0` (nonzero with Chinese root explanation) and `require_normal_user 501` (success). Static checks ensure guards precede `brew`, npm, curl and writes in each launcher.
 - Project launcher checks `EUID` before `brew --prefix` and `npm`. Standalone bootstrap checks `EUID` before any download or access to previously installed code. This addresses the reported Homebrew root error without bypassing Homebrew policy.
 - CI runs as non-root Linux Ubuntu; **cannot claim real Mac Finder root test**. Parent must retry from an ordinary account and report UID/path ownership on failure.
+
+### Verified CI — root guard (2026-10-17)
+https://github.com/JohnsonGarden/3D/actions/runs/39036181217 at commit `32938c213b7877fa4dca239c38a306c02d07433e`: 43/43 Node, 11/11 deploy (previously 9), 12/12 Chromium, typecheck/build and SDD spec check green. The new tests simulate root and normal UID through a pure Bash guard; tests also ensure root checks precede Homebrew/npm/curl. This does NOT substitute for Mac Finder user-environment smoke test.
