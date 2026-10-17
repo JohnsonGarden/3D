@@ -3,6 +3,8 @@
  * AND deterministic arcade footprint collision. SI units, X/Z meters.
  * No map/GIS accuracy or original photo reconstruction implied.
  */
+import { createStreetLayout } from './street-layout.ts'
+
 export type SceneryObstacle = Readonly<{
   id: string
   x: number
@@ -16,22 +18,13 @@ export type CityBuilding = SceneryObstacle & Readonly<{
   color: string
 }>
 
-const CITY_COLORS = ['#839bb5', '#b3a594', '#8ea6ab', '#a7ae98', '#c6a8a0']
-
 function buildScenery(): readonly CityBuilding[] {
-  const solids: CityBuilding[] = []
-  for (let i = 0; i < 20; i++) {
-    const z = 20 - i * 27
-    for (const side of [-1, 1]) {
-      const h = 6 + ((i * 11 + (side + 1) * 7) % 11) * 2.3
-      solids.push(Object.freeze({
-        id: 'city-' + i + '-' + side,
-        x: side * (18 + (i % 3) * 10),
-        z, width: 9, depth: 12, height: h,
-        color: CITY_COLORS[(i + (side + 1)) % CITY_COLORS.length]
-      }))
-    }
-  }
+  // Buildings are derived from the same *fictional* street layout used for
+  // road rendering. Skip lots that intrude on a new junction, while retaining
+  // distinct original roadside solid landmarks below.
+  const solids: CityBuilding[] = createStreetLayout().buildings.map((lot, index) =>
+    Object.freeze({ id: 'city-' + index, ...lot })
+  )
   // Original low roadside garage landmark.
   solids.push(Object.freeze({
     id: 'roadside-garage', x: 12.7, z: 14,

@@ -417,7 +417,7 @@ export default function App() {
           : <div role="alert" className="fallback">
               当前浏览器无法启动 WebGL 2。请开启硬件加速并更新浏览器，或换一台支持 3D 图形的电脑。
             </div>}
-        <div className="scene-label">LOS ANGELES INSPIRED <span>虚构场景 · 非真实地图</span></div>
+        <div className="scene-label">PRACTICE ROADS <span>虚构场景 · 非真实地图 · 3 个十字路口</span></div>
         {showPerformance && (
           <section className="performance-panel" role="region" aria-label="性能诊断">
             <strong>本机浏览器帧率诊断</strong>
