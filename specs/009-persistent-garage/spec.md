@@ -1,6 +1,6 @@
 # 009 — Browser-local persistent vehicle garage
 
-Status: requirements and tests first. Parent explicitly prioritizes scalable gameplay over perfect GLB photo fidelity. Existing 20MB secure local GLB import and no-network policy retained.
+Status: implementation committed; browser end-to-end quality gate in progress (2026-10-17). Parent prioritizes gameplay over perfect GLB photo fidelity. 20MB GLB security and no-network policy retained.
 
 ## User story
 As a parent, when I import a valid child-built vehicle into my garage, then I can revisit it after closing/reopening the browser, select it, return to the procedural fallback, or intentionally delete it without uploading to an external server.

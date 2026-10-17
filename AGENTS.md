@@ -31,7 +31,8 @@ Applies to Codex, Claude Code, Copilot and other agents. READ THIS FIRST.
 - Do not 'fix' flaky tests by skipping them. If WebGL is unavailable in CI, test user-visible fallback and report rendering checks as manual/pending.
 - Driving slice 007: 14 tires visual, two front axles visual steer, default 8×4 (rear A3/A4 powered), optional 8×8; diff-lock logical toggles front/rear/center, Q/1/2/3/T. Low-grip coefficient is a toy demo, **not** realistic tire force, suspension, traction, or gear torque. Imported GLB remains not wheel-rigged.
 - Local-launch slice 008: Finder entry `启动积木世界.command` and standalone `下载并启动积木世界.command` (GitHub archive to ~/BrickWorld3D, preserves existing files), `scripts/start-local.sh`, `scripts/serve-local.mjs` must remain loopback-only and require explicit user consent for Homebrew install; do not add sudo, daemon, telemetry, remote file uploads, or expose 0.0.0.0. npm CI includes `npm run test:deploy` after build. Document Mac smoke tests honestly as pending until run on user's hardware.
-- Avoid fake claims: prototype garage ≠ persistent garage; placeholder brick car ≠ reconstructed car; stylized city ≠ GIS-faithful LA.
+- Persistent garage 009 stores validated explicitly chosen GLB bytes in same-origin IndexedDB with 6-slot cap and manual deletion; this is **not** durable backup, cloud sync, or cross-browser persistence. Must never persist HEIC/music automatically or upload user media. Keep corrupt GLB fallback and guard startup restore.
+- Avoid fake claims: IndexedDB ≠ guaranteed storage/backup; placeholder brick car ≠ reconstructed car; stylized city ≠ GIS-faithful LA.
 
 ## Where to work
 - `src/sim/`: pure vehicle model, fixed-step tests.
