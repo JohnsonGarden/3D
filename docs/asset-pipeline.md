@@ -1,4 +1,4 @@
-# Brick car reconstruction pipeline (M1 — NOT implemented)
+# Brick car reconstruction pipeline (M1 — actual reconstruction NOT implemented)
 
 ## Current source manifest
 Original HEIC files at photo source branch root:
@@ -17,8 +17,11 @@ Do not overwrite originals or treat a file list as an actual visual quality audi
 - Detailed photo likeness remains pending; parent explicitly permits the engine/world/garage work to continue before final micro-shape polishing. See [ADR-0002](adr/0002-profile-baseline.md).
 - Imported GLB preliminary bbox-X calibration only; final asset should use named body-width landmarks so mirrors/side wheels don't distort the reference. See specs/006-proportional-truck-scale.
 
+## Default child creation flow and look pairing
+The product default is **multiview photos → an approved, distinctive brick/pixel-style vehicle → garage → driving**. A **separate** verified realistic automotive interpretation derived from the **same built structure** can be selected later. Keep canonical physical dimensions, car identity, steering axle/wheel placement and collider metadata independent of visible GLB style; switching looks may not secretly swap an unrelated car. An optional AI reconstruction service must disclose remote processing and obtain explicit guardian-aware opt-in. The current one-car measured truck is a fixture; do not normalize every child's car to 2.50m without that car's own dimensions and review. Full decision: [product requirements](product-requirements.md), [016 spec](../specs/016-photo-first-workflow/spec.md).
+
 ## Capture protocol
-Capture 12–24 or more sharply focused overlapping views around the assembled model, consistent diffuse illumination, a matte/plain background, fixed focal length and no motion blur. Include front/rear/sides/roof/underside where safe. Add a ruler or known stud pitch as a scale reference. Shoot colorful/reflective and repeating LEGO studs carefully. Photographing several sides is NOT equivalent to guaranteed watertight reconstruction.
+Ultimately prefer 12–24 or more sharply focused overlapping views around the assembled model, consistent diffuse illumination, a matte/plain background, fixed focal length and no motion blur. Include front/rear/sides/roof/underside where safe. Add a ruler or known stud pitch as a scale reference. Shoot colorful/reflective and repeating LEGO studs carefully. Photographing several sides is NOT equivalent to guaranteed watertight reconstruction.
 
 ## Competing reconstruction methods
 1. **Brick-structural (recommended for faithful block geometry)**: manually reconstruct using permitted LDraw/CAD references and photos, review brick counts and hidden surfaces, export GLB. Verify LDraw parts library license/attribution and LEGO trademark conditions.
