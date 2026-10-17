@@ -41,8 +41,8 @@ test('TDD: steering is directionally correct and stationary steering has no yaw'
   const moving = { ...INITIAL_VEHICLE, speed: 5 }
   const right = advanceVehicle(moving, { ...none, steer: 1 }, 1 / 60)
   const left = advanceVehicle(moving, { ...none, steer: -1 }, 1 / 60)
-  assert.ok(right.heading > 0 && right.x > 0)
-  assert.ok(left.heading < 0 && left.x < 0)
+  assert.ok(right.heading > 0 && right.x > moving.x)
+  assert.ok(left.heading < 0 && left.x < moving.x)
 })
 
 test('TDD: coasting slows without drifting through zero', () => {
