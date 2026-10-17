@@ -408,6 +408,34 @@ export default function App() {
           <span><kbd>Space</kbd> 刹车</span>
           <span><kbd>Q</kbd> 驱动切换 · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 差速锁 · <kbd>T</kbd> 低附着路面</span>
         </aside>
+        {!garageOpen && (
+          <section className="touch-controls" aria-label="触屏驾驶控制">
+            <div className="touch-steering" aria-label="转向">
+              <button type="button" aria-label="左转（按住）"
+                onPointerDown={e => beginTouch('left', e)}
+                onPointerUp={endTouch} onPointerCancel={endTouch}
+                onLostPointerCapture={endTouch}>←<span>左转</span></button>
+              <button type="button" aria-label="右转（按住）"
+                onPointerDown={e => beginTouch('right', e)}
+                onPointerUp={endTouch} onPointerCancel={endTouch}
+                onLostPointerCapture={endTouch}>→<span>右转</span></button>
+            </div>
+            <div className="touch-pedals" aria-label="油门和制动">
+              <button type="button" aria-label="倒车（按住）"
+                onPointerDown={e => beginTouch('reverse', e)}
+                onPointerUp={endTouch} onPointerCancel={endTouch}
+                onLostPointerCapture={endTouch}>▼<span>倒车</span></button>
+              <button type="button" aria-label="刹车（按住）" className="touch-brake"
+                onPointerDown={e => beginTouch('brake', e)}
+                onPointerUp={endTouch} onPointerCancel={endTouch}
+                onLostPointerCapture={endTouch}>■<span>刹车</span></button>
+              <button type="button" aria-label="油门（按住）" className="touch-accelerate"
+                onPointerDown={e => beginTouch('accelerate', e)}
+                onPointerUp={endTouch} onPointerCancel={endTouch}
+                onLostPointerCapture={endTouch}>▲<span>油门</span></button>
+            </div>
+          </section>
+        )}
       </div>
 
       {garageOpen && <div className="garage-backdrop">
