@@ -94,3 +94,6 @@ The same checked standalone Finder bootstrap is pointed to cumulative `feat/017-
 
 ## Phase M1g — 018 annotated photo capture handoff
 The existing 016 session-only photo picker now records manually tagged viewpoint per image and optional physical toy body L/W/H, reports missing front/rear/left/right/top/diagonal categories, and exports a JSON metadata-only capture manifest. This is **not** a photogrammetry/AI reconstruction pass or a claim of geometry fidelity; the current truck-only 2.50m scale is not replaced. See [018](../specs/018-photo-coverage-manifest/spec.md).
+
+## Phase M1h — 019 on-device photo capture hints
+Once a selected JPG/PNG/WebP decodes, a bounded 160px canvas analyzes extreme exposure, original decoded resolution, contrast and neighboring-pixel variation. The resulting warning is on-screen only, with no EXIF/network/IndexedDB write. It is a lightweight heuristic, **not** model reconstruction fidelity or actual blur detection. [019 SDD](../specs/019-local-photo-quality/spec.md).
