@@ -72,3 +72,10 @@ test('physical truck sizes are derived from parent measurements', () => {
   assert.ok(Math.abs(VEHICLE.wheelDiameter - 1.4 / 3.1 * 2.5) < 1e-9)
   assert.ok(VEHICLE.wheelbase > 4 && VEHICLE.wheelbase < VEHICLE.length)
 })
+
+test('four-axle kinematic stand-in uses observed first-to-fourth axle span', () => {
+  const expected = 6.4 / 3.1 * 2.5
+  assert.ok(Math.abs(VEHICLE.wheelbase - expected) < 1e-9)
+  assert.ok(Math.abs(VEHICLE.totalLength - 11.2 / 3.1 * 2.5) < 1e-9)
+  assert.ok(Math.abs(VEHICLE.frontBumperProjection - 0.8 / 3.1 * 2.5) < 1e-9)
+})

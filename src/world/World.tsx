@@ -2,7 +2,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useMemo, useRef } from 'react'
 import type { MutableRefObject } from 'react'
 import { Box3, Group, Object3D, Vector3 } from 'three'
-import { scaleImportedModelByWidth } from '../sim/truck-scale.ts'
+import { scaleImportedModelByWidth, TRUCK_DIMENSIONS } from '../sim/truck-scale.ts'
 import { advanceVehicle, INITIAL_VEHICLE, VEHICLE, speedKmh } from '../sim/vehicle.ts'
 import type { DriverInput, VehicleState } from '../sim/vehicle.ts'
 import { tickFixed } from '../sim/fixed-step.ts'
@@ -67,14 +67,19 @@ function BrickCar() {
           </mesh>
         ))
       )}
-      {[-1, 1].flatMap(side => [-1, 1].map(axle => (
-        <mesh key={'wheel' + side + ':' + axle}
-          position={[side * (VEHICLE.width / 2 - 0.16), radius, axle * VEHICLE.wheelbase / 2]}
+      {[-1, 1].flatMap(side => TRUCK_DIMENSIONS.axleLocalZFromBodyCenterM.map((axleZ, index) => (
+        <mesh key={'wheel' + side + ':' + index}
+          position={[side * (VEHICLE.width / 2 - 0.16), radius, axleZ]}
           rotation={[0, 0, Math.PI / 2]} castShadow>
           <cylinderGeometry args={[radius, radius, 0.32, 24]} />
           <meshStandardMaterial color="#232b37" roughness={0.8} />
         </mesh>
       )))}
+      {/* Measured forward bumper extension; bumper HEIGHT remains artistic. */}
+      <mesh position={[0, 0.99, -halfLength - TRUCK_DIMENSIONS.frontBumperProjectionM / 2]} castShadow>
+        <boxGeometry args={[VEHICLE.width * 0.95, 0.28, TRUCK_DIMENSIONS.frontBumperProjectionM]} />
+        <meshStandardMaterial color="#b9bcb5" metalness={0.58} roughness={0.41} />
+      </mesh>
       {[-0.8, 0.8].map(x => (
         <mesh key={'headlamp' + x} position={[x, 1.02, -halfLength - 0.01]}>
           <boxGeometry args={[0.45, 0.2, 0.018]} />

@@ -52,3 +52,12 @@ test('garage shows full truck calibration and explicit bumper exclusion', async 
     await expect(info).toContainText(expected)
   }
 })
+
+test('garage displays four axle intervals and front bumper total truck length', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: /打开车库/ }).click()
+  const calibration = page.getByLabel('等比例放大标定')
+  for (const datum of ['总长（含前防撞梁）', '9.03 m', '前防撞梁向前突出', '0.65 m', '第一至第四轴轴距', '5.16 m', '2.58 / 1.29 / 1.29 m']) {
+    await expect(calibration).toContainText(datum)
+  }
+})

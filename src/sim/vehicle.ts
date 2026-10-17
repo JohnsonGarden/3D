@@ -27,7 +27,9 @@ export const VEHICLE = Object.freeze({
   width: TRUCK_DIMENSIONS.bodyWidthM,
   height: TRUCK_DIMENSIONS.cabHighestPointM,
   wheelDiameter: TRUCK_DIMENSIONS.tireDiameterM,
-  wheelbase: 5.4, // provisional axle placement, not from photos
+  totalLength: TRUCK_DIMENSIONS.totalLengthWithBumperM,
+  frontBumperProjection: TRUCK_DIMENSIONS.frontBumperProjectionM,
+  wheelbase: TRUCK_DIMENSIONS.firstToFourthAxleM, // measured span, kinematic bicycle proxy (NOT 4-axle dynamics)
   maxForward: 22,
   maxReverse: 4,
   acceleration: 3.2,

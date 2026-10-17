@@ -10,8 +10,9 @@ Do not overwrite originals or treat a file list as an actual visual quality audi
 - Body width: 3.1 cm
 - Front-cab highest point: 4.7 cm
 - Tire outside diameter: 1.4 cm
-- Front bumper projection: unmeasured (null, not zero)
-- Width-calibrated in-world size: 2.50 m × 8.387 m × 3.790 m; wheel diameter 1.129 m, scale 80.645×; single isotropic multiplier.
+- Front bumper maximum protrusion beyond body front: **0.8cm** (game **0.645m**); bumper height unmeasured
+- Width-calibrated in-world size: 2.50 m × 8.387 m × 3.790 m; wheel diameter 1.129 m, scale 80.645×; single isotropic multiplier. Overall front-bumper-included length = **9.032m**, subject to verifying other rear appendages.
+- Four axle centerlines: first 2.4cm from body front, subsequent spacings 3.2 / 1.6 / 1.6cm, fourth 1.6cm before body rear. Sum **2.4+3.2+1.6+1.6+1.6=10.4cm**. Positions from body front game: 1.9355 / 4.5161 / 5.8065 / 7.0968m; first-to-last span 5.1613m. Assumes tape measures axle centerlines.
 - Imported GLB preliminary bbox-X calibration only; final asset should use named body-width landmarks so mirrors/side wheels don't distort the reference. See specs/006-proportional-truck-scale.
 
 ## Capture protocol

@@ -198,6 +198,10 @@ export default function App() {
               <div><dt>车身宽</dt><dd>{TRUCK_DIMENSIONS.bodyWidthM.toFixed(2)} m</dd></div>
               <div><dt>车头最高点</dt><dd>{TRUCK_DIMENSIONS.cabHighestPointM.toFixed(2)} m</dd></div>
               <div><dt>轮胎直径</dt><dd>{TRUCK_DIMENSIONS.tireDiameterM.toFixed(2)} m</dd></div>
+              <div><dt>前防撞梁向前突出</dt><dd>{TRUCK_DIMENSIONS.frontBumperProjectionM.toFixed(2)} m</dd></div>
+              <div><dt>总长（含前防撞梁）</dt><dd>{TRUCK_DIMENSIONS.totalLengthWithBumperM.toFixed(2)} m</dd></div>
+              <div><dt>第一至第四轴轴距</dt><dd>{TRUCK_DIMENSIONS.firstToFourthAxleM.toFixed(2)} m</dd></div>
+              <div><dt>轴距 1–2 / 2–3 / 3–4</dt><dd>{TRUCK_DIMENSIONS.axleSpacingM.map(x => x.toFixed(2)).join(' / ')} m</dd></div>
             </dl>
           </div>
           <label className="file-button">导入孩子的小车（GLB）
