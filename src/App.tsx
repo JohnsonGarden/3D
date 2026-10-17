@@ -22,6 +22,10 @@ import {
 import type { GarageEntry } from './garage/storage.ts'
 import { prepareGarageExport } from './garage/export.ts'
 import { validatePhotoSelection, MAX_PHOTOS } from './garage/photo-intake.ts'
+import {
+  VIEW_OPTIONS, evaluatePhotoCoverage, parseToyDimensions, createCaptureManifest
+} from './garage/capture-manifest.ts'
+import type { PhotoView, ToyDimensionFields } from './garage/capture-manifest.ts'
 
 const MAX_GLB = 20 * 1024 * 1024
 const MAX_AUDIO = 30 * 1024 * 1024
@@ -76,7 +80,12 @@ export default function App() {
   }, [])
   const [model, setModel] = useState<Object3D | null>(null)
   const [modelName, setModelName] = useState(SAMPLE_NAME)
-  const [photoPreviews, setPhotoPreviews] = useState<{name: string, url: string}[]>([])
+  const [photoPreviews, setPhotoPreviews] = useState<{
+    name:string; url:string; type:string; size:number; view:PhotoView
+  }[]>([])
+  const [toyDimensions, setToyDimensions] = useState<ToyDimensionFields>({
+    length:'',width:'',height:''
+  })
   const [musicUrl, setMusicUrl] = useState<string | null>(null)
   const [musicName, setMusicName] = useState<string | null>(null)
   const [error, setError] = useState('')
@@ -341,12 +350,46 @@ export default function App() {
     if (!photos.length) return
     try {
       const checked = validatePhotoSelection(photos)
-      const urls = checked.map(file => ({ name:file.name, url:URL.createObjectURL(file) }))
+      const urls: typeof photoPreviews = []
+      try {
+        checked.forEach(file => {
+          urls.push({name:file.name,size:file.size,type:file.type,
+            view:'unassigned',url:URL.createObjectURL(file)})
+        })
+      } catch {
+        urls.forEach(item=>URL.revokeObjectURL(item.url))
+        throw new Error('无法创建照片预览，请尝试更小的照片。')
+      }
       setPhotoPreviews(urls)
+      setToyDimensions({length:'',width:'',height:''})
       setError('')
     } catch (cause) {
       // A bad replacement must never destroy previously selected previews.
       setError(cause instanceof Error ? cause.message : '无法读取所选照片，请重新选择。')
+    }
+  }
+
+  const exportCaptureManifest = () => {
+    let objectUrl: string | null = null
+    try {
+      const dimensions = parseToyDimensions(toyDimensions)
+      const manifest = createCaptureManifest(photoPreviews,dimensions)
+      // The manifest is metadata only, intentionally never contains photo bytes
+      // or short-lived browser object URLs. Download requires an explicit click.
+      const blob = new Blob([JSON.stringify(manifest,null,2)],{type:'application/json'})
+      objectUrl = URL.createObjectURL(blob)
+      const anchor = document.createElement('a')
+      anchor.href = objectUrl
+      anchor.download = 'brickworld-capture.json'
+      document.body.appendChild(anchor)
+      try { anchor.click() } finally { anchor.remove() }
+      const revoke = objectUrl
+      window.setTimeout(()=>URL.revokeObjectURL(revoke),2000)
+      objectUrl = null
+      setError('')
+    } catch (err) {
+      if (objectUrl) URL.revokeObjectURL(objectUrl)
+      setError(err instanceof Error ? err.message : '采集清单导出失败。')
     }
   }
 
@@ -579,7 +622,11 @@ export default function App() {
                   accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
                   onChange={loadPhotos}/>
               </label>
-              <button type="button" onClick={() => {setPhotoPreviews([]); setError('')}}
+              <button type="button" onClick={() => {
+                setPhotoPreviews([])
+                setToyDimensions({length:'',width:'',height:''})
+                setError('')
+              }}
                 disabled={photoPreviews.length === 0} aria-label="清空已选照片">清空已选照片</button>
             </div>
             <p className="photo-count">{photoPreviews.length
@@ -590,8 +637,45 @@ export default function App() {
                 <figure key={preview.url}>
                   <img src={preview.url} alt={'照片预览：' + preview.name} loading="lazy"/>
                   <figcaption>{index + 1}. {preview.name}</figcaption>
+                  <label className="photo-view-label">拍摄角度
+                    <select aria-label={'照片角度：' + preview.name}
+                      value={preview.view}
+                      onChange={event => {
+                        const next=event.target.value as PhotoView
+                        setPhotoPreviews(list=>list.map(p=>
+                          p.url===preview.url?{...p,view:next}:p))
+                      }}>
+                      {VIEW_OPTIONS.map(option =>
+                        <option key={option.value} value={option.value}>{option.label}</option>)}
+                    </select>
+                  </label>
                 </figure>)}
             </div>}
+            <div role="status" aria-label="照片拍摄覆盖度" className="photo-coverage">
+              {evaluatePhotoCoverage(photoPreviews).annotated
+                ? '已人工标注主要方向（不代表照片清晰、可重建或已建模）。'
+                : '缺少：' + evaluatePhotoCoverage(photoPreviews).missing.map(key => ({
+                    front:'车头',rear:'车尾',left:'左侧',right:'右侧',top:'顶部',diagonal:'斜侧'
+                  }[key])).join('、')}
+            </div>
+            <fieldset className="toy-measurements">
+              <legend>实物小车测量（cm，选填，必须一起填长宽高）</legend>
+              {([
+                ['length','实物车长（cm）'],['width','实物车宽（cm）'],
+                ['height','实物车高（cm）']
+              ] as const).map(([field,title]) => (
+                <label key={field}>{title}
+                  <input type="number" inputMode="decimal" step="0.1" min="0.5" max="200"
+                    aria-label={title} value={toyDimensions[field]}
+                    onChange={e=>setToyDimensions(old=>({...old,[field]:e.target.value}))}
+                    placeholder="0.5–200" />
+                </label>
+              ))}
+            </fieldset>
+            <button type="button" className="capture-download"
+              disabled={photoPreviews.length===0}
+              onClick={exportCaptureManifest}>导出采集清单 JSON</button>
+            <small>采集清单仅包含照片文件名、大小、人工标注角度和填写的厘米尺寸；不含原始照片、EXIF 或预览 URL。文件名可能有个人信息，只有点击后才会下载。本功能不会自动识别拍摄角度，不会自动建模或改变驾驶模型。</small>
             <small>最多 {MAX_PHOTOS} 张，每张 12 MiB、共 72 MiB；目前仅支持 JPG、PNG、WebP。HEIC 请先转换 JPG。照片仅保留当前页面内存，不会上传，也不会自动存入车库。</small>
           </section>
           <div className="calibration" aria-label="等比例放大标定">
