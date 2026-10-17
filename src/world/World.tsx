@@ -4,6 +4,8 @@ import type { MutableRefObject } from 'react'
 import { Box3, Group, Object3D, Vector3 } from 'three'
 import { scaleImportedModelByWidth, TRUCK_DIMENSIONS } from '../sim/truck-scale.ts'
 import { advanceVehicle, INITIAL_VEHICLE, VEHICLE, speedKmh } from '../sim/vehicle.ts'
+import { resolveSceneryContact } from '../sim/contact.ts'
+import { CITY_BUILDINGS } from './city-layout.ts'
 import type { DriverInput, VehicleState } from '../sim/vehicle.ts'
 import { tickFixed } from '../sim/fixed-step.ts'
 import { axleSteerAngles } from '../sim/drivetrain.ts'
@@ -17,9 +19,8 @@ type WorldProps = {
   resetCount: number
   model: Object3D | null
   onSpeed: (speed: number) => void
+  onCollision: (hit: boolean) => void
 }
-
-const CITY_COLORS = ['#839bb5', '#b3a594', '#8ea6ab', '#a7ae98', '#c6a8a0']
 
 function BrickCar({ wheelStations }: { wheelStations: MutableRefObject<Record<string, Group | null>> }) {
   // Procedural sample only — not reconstructed from the six HEIC images.
@@ -133,19 +134,6 @@ function ImportedCar({ model }: { model: Object3D }) {
 }
 
 function RoadsAndBuildings() {
-  const buildings = useMemo(() => {
-    const result: { x: number, z: number, h: number, color: string }[] = []
-    for (let i = 0; i < 20; i++) {
-      const z = 20 - i * 27
-      for (const side of [-1, 1]) {
-        const h = 6 + ((i * 11 + (side + 1) * 7) % 11) * 2.3
-        result.push({ x: side * (18 + (i % 3) * 10), z,
-          h, color: CITY_COLORS[(i + (side + 1)) % CITY_COLORS.length] })
-      }
-    }
-    return result
-  }, [])
-
   return (
     <group>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.03, -200]} receiveShadow>
@@ -168,16 +156,12 @@ function RoadsAndBuildings() {
           <meshBasicMaterial color="#efdbc0" />
         </mesh>
       ))}
-      {buildings.map((b, i) => (
-        <mesh key={i} position={[b.x, b.h / 2 - 0.02, b.z]} castShadow receiveShadow>
-          <boxGeometry args={[9, b.h, 12]} />
+      {CITY_BUILDINGS.map(b => (
+        <mesh key={b.id} position={[b.x, b.height / 2 - 0.02, b.z]} castShadow receiveShadow>
+          <boxGeometry args={[b.width, b.height, b.depth]} />
           <meshStandardMaterial color={b.color} roughness={0.88} />
         </mesh>
       ))}
-      <mesh position={[12.7, 1.8, 14]} castShadow>
-        <boxGeometry args={[8.5, 3.6, 8]} />
-        <meshStandardMaterial color="#d5d3c8" roughness={0.85} />
-      </mesh>
       <mesh position={[8.4, 1.8, 14.2]}>
         <boxGeometry args={[0.12, 2.8, 5.4]} />
         <meshStandardMaterial color="#364959" />
@@ -186,12 +170,13 @@ function RoadsAndBuildings() {
   )
 }
 
-function DrivingScene({ controls, drivetrain, garageOpen, resetCount, model, onSpeed }: WorldProps) {
+function DrivingScene({ controls, drivetrain, garageOpen, resetCount, model, onSpeed, onCollision }: WorldProps) {
   const car = useRef<Group>(null)
   const wheelStations = useRef<Record<string, Group | null>>({})
   const vehicle = useRef<VehicleState>({ ...INITIAL_VEHICLE })
   const accumulated = useRef(0)
   const hudClock = useRef(0)
+  const contactActive = useRef(false)
   const targetPos = useRef(new Vector3())
   const lookAtPos = useRef(new Vector3())
   const { camera } = useThree()
@@ -199,8 +184,10 @@ function DrivingScene({ controls, drivetrain, garageOpen, resetCount, model, onS
   useEffect(() => {
     vehicle.current = { ...INITIAL_VEHICLE }
     accumulated.current = 0
+    contactActive.current = false
     onSpeed(0)
-  }, [resetCount, onSpeed])
+    onCollision(false)
+  }, [resetCount, onSpeed, onCollision])
 
   useFrame((_, rawDt) => {
     const dt = Math.min(Math.max(rawDt, 0), 0.12)
@@ -208,7 +195,16 @@ function DrivingScene({ controls, drivetrain, garageOpen, resetCount, model, onS
       accumulated.current = tickFixed(
         accumulated.current, dt, VEHICLE.fixedStep, 6,
         () => {
-          vehicle.current = advanceVehicle(vehicle.current, controls.current, VEHICLE.fixedStep, drivetrain.current)
+          const proposed = advanceVehicle(vehicle.current, controls.current, VEHICLE.fixedStep, drivetrain.current)
+          const result = resolveSceneryContact(vehicle.current, proposed, CITY_BUILDINGS)
+          vehicle.current = result.state
+          if (result.hit && !contactActive.current) {
+            contactActive.current = true
+            onCollision(true)
+          } else if (!result.hit && contactActive.current && Math.abs(result.state.speed) > 0.2) {
+            contactActive.current = false
+            onCollision(false)
+          }
         }
       )
     } else {

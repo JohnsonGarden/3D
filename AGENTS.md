@@ -46,3 +46,6 @@ Applies to Codex, Claude Code, Copilot and other agents. READ THIS FIRST.
 - `scripts/`: enforceable checks. `tests/e2e/`: observable browser paths.
 
 If the next task is too large, split it at a child-visible playable checkpoint rather than scaffolding an unused abstraction.
+
+
+- Scenery contact 012: `src/world/city-layout.ts` must remain single source of truth for solid building footprints in both R3F meshes and `src/sim/contact.ts`. Measured truck is a 2D swept oriented rectangle with extra front bumper; do not describe it as a rigid-body simulator, curb/ground contact, per-tire collision or imported-GLB exact mesh. Fixed-step contact must be deterministic, bounded, recoverable via reverse/reset and emit React state only on collision status transitions.

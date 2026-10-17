@@ -59,3 +59,7 @@ More children-created vehicles, collectibles/challenges, curated maps and option
 - Transparent/glossy repetitive plastic confuses image-only photogrammetry; parts-based assembly may outperform a textured mesh.
 - GPU/browser differences; realistic LA geography/photography increases download size, rendering, and legal complexity.
 - Who owns the photos/child work, target age/platform, true-to-scale driving vs playful enlarged car; record choices when verified, do not block M0.
+
+
+## Phase M2a: first deterministic arcade scenery contact — 012
+Visible building/kiosk ground footprints and calibrated four-axle truck rectangle share fixed X/Z coordinates. Substepped swept tests prevent obvious forward tunneling, stop at the first contact, and permit reverse or R reset. This removes building ghosting without pretending to be Rapier rigid-body collision, spring suspension, curb dynamics, or real vehicle physics. Apple Silicon/Safari and full model profile QA remain manual. See [012 SDD](../specs/012-static-contact/spec.md).
