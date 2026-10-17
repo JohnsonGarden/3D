@@ -132,3 +132,11 @@ footer { color:#8498b4; text-align:center; font-size:11px; padding:10px; }
   .touch-controls { left:5px; right:5px; gap:4px; }
   .touch-controls button { width:54px; height:64px; }
 }
+
+
+/* Deterministic scenery contact HUD; emitted only on collision/recovery events. */
+.hud .contact-alert {
+  color:#ffe6aa; background:#693f2a; border:1px solid #c38a5a;
+  border-radius:8px; padding:9px; font-size:11px;
+  line-height:1.5; max-width:220px;
+}
