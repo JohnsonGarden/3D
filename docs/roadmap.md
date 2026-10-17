@@ -7,8 +7,8 @@
 - Parent/creator: imports/curates models, optional local music, manages ownership and privacy.
 - Creator/developer: repeatable import, validated scale/orientation, predictable performance, reproducible builds.
 
-## User journey
-Photograph brick creation → reconstruction/curation → inspect 3D turntable → save in garage → select model → enter road → explore urban/suburban routes → replay/share only with explicit consent.
+## User journey — accepted photo-first target, not yet fully implemented
+Build physical brick car → photograph several angles → inspect an authentic, **brick/pixel-style 3D** rendition at **proportion-preserving driving scale** → save and select in garage → practice-road drive → **optionally toggle a structure-derived realistic car** (only when that separately generated, verified variant exists) → later explore licensed city-center maps. Manual GLB import remains an advanced fallback. See [confirmed product requirements](product-requirements.md) and [016 spec](../specs/016-photo-first-workflow/spec.md).
 
 ## Phase M0: runnable vertical slice (current)
 One procedural brick car, roads and buildings, camera, keyboard driving and brake, garage overlay, locally imported GLB/music, specs and automated tests. Music stays session-local; GLB can now be explicitly saved to same-origin IndexedDB by the 009 garage slice. No LA exact geography or raw-photo reconstruction claims.
@@ -19,8 +19,11 @@ A first truck was measured at 10.4cm body length **excluding front bumper**, 3.1
 ## v3 parent review gate (2026-10-17)
 **External dimensions and overall low-slung stance APPROVED FOR DEVELOPMENT, not final art approval.** Cabin length 4.8cm; chassis ground clearance revised to 0.3cm; no cargo container; 14 tires on four axles. 8×4/8×8 front-drive coupling and three diff locks confirmed. See [ADR-0002](adr/0002-profile-baseline.md). Don't block engine/garage/world progress on tiny cab contour refinements or claim the current procedural truck faithfully reproduces the HEIC model.
 
-## Phase M1: first authentic car
-Evaluate six HEIC views; ask for any missing views and measured brick dimensions. Produce approved GLB with three options: manually reconstructed LDraw/CAD (preferred when brick-accurate), conventional multi-view mesh, AI-assisted draft then manual repair. Side-by-side photo fidelity review, stable center, wheel alignment, parts/provenance data.
+## Phase M1: photo-first authentic brick/pixel cars — top new capability
+Child/guardian normally adds **multiple viewpoints** of each unique physical brick vehicle. Capture guided angles and scale cues; check occlusion, provenance and measurements. Reconstruct and review an authentic brick/pixel style GLB with preserved wheel locations, part silhouette and proportional scale before marking it as photo-generated. Choose a measured reconstruction adapter (manual CAD/LDraw, multiview, AI draft and manual review). **No current automatic photo→3D capability.** The 016 implementation first adds local photo-set intake without pretending it generates a car. The first truck's known scale is not a universal template.
+
+## Phase M1f: paired realistic car variant — after verified brick reconstruction
+Generate an **automotive-looking body based on the child's actual truck/car structure**, retaining cab/body layout, axle/wheel geometry and recognisable identity; it is a geometry transformation, not a material skin on an unrelated vehicle. Allow free LEGO/pixel ↔ realistic switching once the pair exists, preserving drive physics and garage identity. Absent variant must be clearly unavailable; no fake control.
 
 ## Phase M1a: child-friendly drivetrain controls — first slice shipped
 14-tire sample tractor with two steering axle stations, Q-switched 8×4 / 8×8, separate front/rear/center diff-lock buttons, a low-grip demonstration toggle and bounded deterministic motion. Interactive Chrome tests and build passed. **This is simplified gameplay logic**, not real four-axle physical drivetrain or suspension; a subsequent Rapier/terrain milestone is required.
@@ -40,8 +43,13 @@ A five-button, pointer-capture, two-finger press-and-hold UI for small coarse-po
 ## Phase M2: satisfying driving and garage
 Rapier collision/contacts, suspension and wheel visuals, controller/touch, track reset, more robust vehicle asset review, richer multi-car management UX and metadata/provenance; basic manual GLB export added in M1d. Sound settings and audio accessibility. Aim for kid testing with timed first-drive/steer/recovery sessions.
 
-## Phase M3: Los Angeles-inspired open world
-Progressive, chunked neighborhoods: road geometry, traffic signals, junctions, scenery, coastal/suburban road, day/night. Real LA road import is separate GIS/licensing subproject; attribution and ODbL must be satisfied before using OSM data. No unlicensed textures/Google 3D tiles.
+## Phase M3 (LATER): licensed, authentic city-center maps — STOCKHOLM FIRST
+Real-world map work is deliberately deferred until photo-derived authentic cars, multi-car garage and satisfying driving exist. Only central district extents, each explicitly bounded and source-verified:
+1. **Stockholm / 斯德哥尔摩** downtown — first map.
+2. **Frankfurt / 法兰克福** downtown — second map.
+3. **Los Angeles / 洛杉矶** downtown — third map.
+
+Connectivity, actual street orientation, significant building blocks and relative placement matter more than photoreal facade textures. Aim for atmospheric simulation-driving scenery at a credible level (SnowRunner is a visual quality analogy, **not an asset source**). OSM/geodata licenses and attribution are explicit gates; no proprietary Google 3D tiles. The existing fictional LA-inspired test track is **not** a completed LA city map.
 
 ## Phase M4: advanced play
 More children-created vehicles, collectibles/challenges, curated maps and optional share/export with explicit guardian controls. No networking/multiplayer until privacy + moderation design exists.
@@ -57,7 +65,7 @@ More children-created vehicles, collectibles/challenges, curated maps and option
 ## Risks and open decisions
 - Six HEIC images might not cover underside, rear, wheels and hidden studs.
 - Transparent/glossy repetitive plastic confuses image-only photogrammetry; parts-based assembly may outperform a textured mesh.
-- GPU/browser differences; realistic LA geography/photography increases download size, rendering, and legal complexity.
+- GPU/browser differences; authentic Stockholm/Frankfurt/LA geography increases data, rendering and license obligations. Realistic car variant requires structural modeling, not just texturing.
 - Who owns the photos/child work, target age/platform, true-to-scale driving vs playful enlarged car; record choices when verified, do not block M0.
 
 
