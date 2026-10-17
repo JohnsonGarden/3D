@@ -1,7 +1,7 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useMemo, useRef } from 'react'
 import type { MutableRefObject } from 'react'
-import { Box3, Group, Object3D, Vector3 } from 'three'
+import { Box3, Color, Group, InstancedMesh, Object3D, Vector3 } from 'three'
 import { scaleImportedModelByWidth, TRUCK_DIMENSIONS } from '../sim/truck-scale.ts'
 import { advanceVehicle, INITIAL_VEHICLE, VEHICLE, speedKmh } from '../sim/vehicle.ts'
 import type { DriverInput, VehicleState } from '../sim/vehicle.ts'
@@ -9,6 +9,8 @@ import { tickFixed } from '../sim/fixed-step.ts'
 import { axleSteerAngles } from '../sim/drivetrain.ts'
 import { APPROVED_PROFILE_M } from '../sim/approved-profile.ts'
 import type { DrivetrainState } from '../sim/drivetrain.ts'
+import { createStreetLayout, ROAD_WIDTH_M } from './street-layout.ts'
+import type { BuildingLot, LaneMarking } from './street-layout.ts'
 
 type WorldProps = {
   controls: MutableRefObject<DriverInput>
@@ -18,8 +20,6 @@ type WorldProps = {
   model: Object3D | null
   onSpeed: (speed: number) => void
 }
-
-const CITY_COLORS = ['#839bb5', '#b3a594', '#8ea6ab', '#a7ae98', '#c6a8a0']
 
 function BrickCar({ wheelStations }: { wheelStations: MutableRefObject<Record<string, Group | null>> }) {
   // Procedural sample only — not reconstructed from the six HEIC images.
@@ -132,19 +132,59 @@ function ImportedCar({ model }: { model: Object3D }) {
   )
 }
 
+function InstancedBuildings({ buildings }: { buildings: BuildingLot[] }) {
+  const mesh = useRef<InstancedMesh>(null)
+  useEffect(() => {
+    const target = mesh.current
+    if (!target) return
+    const matrix = new Object3D()
+    const color = new Color()
+    buildings.forEach((building, index) => {
+      matrix.position.set(building.x, building.height / 2 - 0.02, building.z)
+      matrix.scale.set(building.width, building.height, building.depth)
+      matrix.updateMatrix()
+      target.setMatrixAt(index, matrix.matrix)
+      target.setColorAt(index, color.set(building.color))
+    })
+    target.instanceMatrix.needsUpdate = true
+    if (target.instanceColor) target.instanceColor.needsUpdate = true
+    target.computeBoundingSphere()
+  }, [buildings])
+  return (
+    <instancedMesh ref={mesh} args={[undefined, undefined, buildings.length]} castShadow receiveShadow>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial color="#ffffff" roughness={0.88} />
+    </instancedMesh>
+  )
+}
+
+function InstancedMarkings({ markings }: { markings: LaneMarking[] }) {
+  const mesh = useRef<InstancedMesh>(null)
+  useEffect(() => {
+    const target = mesh.current
+    if (!target) return
+    const matrix = new Object3D()
+    markings.forEach((mark, index) => {
+      matrix.position.set(mark.x, 0.06, mark.z)
+      matrix.rotation.set(0, mark.axis === 'x' ? Math.PI / 2 : 0, 0)
+      matrix.scale.set(1, 1, 1)
+      matrix.updateMatrix()
+      target.setMatrixAt(index, matrix.matrix)
+    })
+    target.instanceMatrix.needsUpdate = true
+    target.computeBoundingSphere()
+  }, [markings])
+  return (
+    <instancedMesh ref={mesh} args={[undefined, undefined, markings.length]} frustumCulled={false}>
+      <boxGeometry args={[0.13, 0.015, 3.2]} />
+      <meshBasicMaterial color="#efdbc0" />
+    </instancedMesh>
+  )
+}
+
+/** Three walkable-looking crossings; no rigid collision or geographic accuracy implied. */
 function RoadsAndBuildings() {
-  const buildings = useMemo(() => {
-    const result: { x: number, z: number, h: number, color: string }[] = []
-    for (let i = 0; i < 20; i++) {
-      const z = 20 - i * 27
-      for (const side of [-1, 1]) {
-        const h = 6 + ((i * 11 + (side + 1) * 7) % 11) * 2.3
-        result.push({ x: side * (18 + (i % 3) * 10), z,
-          h, color: CITY_COLORS[(i + (side + 1)) % CITY_COLORS.length] })
-      }
-    }
-    return result
-  }, [])
+  const layout = useMemo(() => createStreetLayout(), [])
 
   return (
     <group>
@@ -152,33 +192,44 @@ function RoadsAndBuildings() {
         <planeGeometry args={[1250, 1250]} />
         <meshStandardMaterial color="#839b71" roughness={0.98} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, -260]} receiveShadow>
-        <planeGeometry args={[7, 760]} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]}
+        position={[layout.mainRoad.x, 0.02, layout.mainRoad.z]} receiveShadow>
+        <planeGeometry args={[ROAD_WIDTH_M, layout.mainRoad.length]} />
         <meshStandardMaterial color="#4c5767" roughness={0.96} />
       </mesh>
-      {[-4.2, 4.2].map(x => (
-        <mesh key={x} position={[x, 0.08, -250]} receiveShadow>
-          <boxGeometry args={[1.6, 0.16, 780]} />
+      {layout.crossroads.map(road => (
+        <mesh key={'crossroad-' + road.z} rotation={[-Math.PI / 2, 0, 0]}
+          position={[0, 0.025, road.z]} receiveShadow>
+          <planeGeometry args={[road.length, road.width]} />
+          <meshStandardMaterial color="#4c5767" roughness={0.96} />
+        </mesh>
+      ))}
+      {layout.mainSidewalks.map(curb => (
+        <mesh key={'main-curb-' + curb.x + '-' + curb.z}
+          position={[curb.x, 0.08, curb.z]} receiveShadow>
+          <boxGeometry args={[1.6, 0.16, curb.length]} />
           <meshStandardMaterial color="#b4b3a3" roughness={1} />
         </mesh>
       ))}
-      {Array.from({ length: 105 }, (_, i) => (
-        <mesh key={i} position={[0, 0.06, 30 - i * 7.2]}>
-          <boxGeometry args={[0.13, 0.015, 3.2]} />
-          <meshBasicMaterial color="#efdbc0" />
-        </mesh>
-      ))}
-      {buildings.map((b, i) => (
-        <mesh key={i} position={[b.x, b.h / 2 - 0.02, b.z]} castShadow receiveShadow>
-          <boxGeometry args={[9, b.h, 12]} />
-          <meshStandardMaterial color={b.color} roughness={0.88} />
-        </mesh>
-      ))}
-      <mesh position={[12.7, 1.8, 14]} castShadow>
+      {layout.crossroads.flatMap(road =>
+        [-1, 1].flatMap(side =>
+          [-1, 1].map(end => (
+            <mesh key={'cross-curb-' + road.z + '-' + side + '-' + end}
+              position={[end * 63, 0.08, road.z + side * 4.2]} receiveShadow>
+              <boxGeometry args={[114, 0.16, 1.6]} />
+              <meshStandardMaterial color="#b4b3a3" roughness={1} />
+            </mesh>
+          ))
+        )
+      )}
+      <InstancedMarkings markings={layout.markings} />
+      <InstancedBuildings buildings={layout.buildings} />
+      {/* Existing fictional garage set back from the main road, not a real address. */}
+      <mesh position={[12.7, 1.8, 65]} castShadow>
         <boxGeometry args={[8.5, 3.6, 8]} />
         <meshStandardMaterial color="#d5d3c8" roughness={0.85} />
       </mesh>
-      <mesh position={[8.4, 1.8, 14.2]}>
+      <mesh position={[8.4, 1.8, 65.2]}>
         <boxGeometry args={[0.12, 2.8, 5.4]} />
         <meshStandardMaterial color="#364959" />
       </mesh>
