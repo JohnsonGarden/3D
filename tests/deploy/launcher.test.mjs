@@ -66,3 +66,29 @@ test('bootstrap refuses to overwrite an unrelated existing user folder', () => {
     assert.equal(readFileSync(join(folder,'important.txt'),'utf8'),'do not delete')
   } finally {rmSync(folder,{recursive:true,force:true})}
 })
+
+test('privilege guard refuses root explicitly and allows an ordinary user ID', () => {
+  const guard = resolve('scripts/require-normal-user.sh')
+  assert.ok(existsSync(guard), 'Both launchers must share a testable root policy')
+  execFileSync('/bin/bash',['-n',guard],{stdio:'pipe'})
+  const root = spawnSync('/bin/bash', ['-c',
+    'source "$1"; require_normal_user 0', 'test', guard], {encoding:'utf8',timeout:3000})
+  assert.notEqual(root.status,0,'root must be refused before Homebrew/npm/installer file operations')
+  assert.match(root.stderr,/root|管理员|普通用户/i)
+  const normal = spawnSync('/bin/bash', ['-c',
+    'source "$1"; require_normal_user 501', 'test', guard], {encoding:'utf8',timeout:3000})
+  assert.equal(normal.status,0,normal.stderr)
+})
+
+test('project launcher and standalone bootstrap block root before brew, npm, curl and writes', () => {
+  const main = readFileSync(script,'utf8')
+  const standalone = readFileSync(bootstrap,'utf8')
+  assert.match(main,/require_normal_user.*EUID|require_normal_user\s*\$\{?EUID/)
+  assert.match(standalone,/if\s+\[\[\s+"?\$\{?EUID|require_normal_user/)
+  const mainGuard = main.indexOf('require_normal_user')
+  assert.ok(mainGuard > 0 && mainGuard < main.indexOf('use_brew_node()'))
+  const bootstrapGuard = standalone.indexOf('EUID')
+  assert.ok(bootstrapGuard > 0 && bootstrapGuard < standalone.indexOf('if [[ -d "$HOME_DIR"'))
+  assert.ok(bootstrapGuard < standalone.indexOf('curl --fail'))
+  assert.ok(bootstrapGuard < standalone.indexOf('mkdir -p'))
+})
