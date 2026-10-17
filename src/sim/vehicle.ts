@@ -1,4 +1,6 @@
 import { TRUCK_DIMENSIONS } from './truck-scale.ts'
+import { effectiveSteerAngle, INITIAL_DRIVETRAIN, tractionCoefficient } from './drivetrain.ts'
+import type { DrivetrainState } from './drivetrain.ts'
 /**
  * Game simulation is in SI units: meters, seconds, radians.
  * Forward = -Z at heading zero, X increases toward the right.
@@ -53,13 +55,15 @@ const approach = (value: number, target: number, amount: number): number =>
 export function advanceVehicle(
   current: Readonly<VehicleState>,
   input: Readonly<DriverInput>,
-  dt: number
+  dt: number,
+  drivetrain: Readonly<DrivetrainState> = INITIAL_DRIVETRAIN
 ): VehicleState {
   if (!Number.isFinite(dt) || dt < 0 ||
       !Object.values(current).every(Number.isFinite) ||
       !Number.isFinite(input.throttle) || !Number.isFinite(input.steer)) {
     throw new RangeError('Vehicle simulation requires finite state, controls and nonnegative dt')
   }
+  const grip = tractionCoefficient(drivetrain)
   const elapsed = clamp(dt, 0, VEHICLE.maxStep)
   const throttle = clamp(input.throttle, -1, 1)
   const steer = clamp(input.steer, -1, 1)
@@ -68,7 +72,7 @@ export function advanceVehicle(
   if (input.brake) {
     speed = approach(speed, 0, VEHICLE.brakeDeceleration * elapsed)
   } else {
-    speed += throttle * VEHICLE.acceleration * elapsed
+    speed += throttle * VEHICLE.acceleration * grip * elapsed
     if (throttle === 0) {
       speed = approach(speed, 0, VEHICLE.rollingResistance * elapsed)
     }
@@ -76,7 +80,7 @@ export function advanceVehicle(
   speed = clamp(speed, -VEHICLE.maxReverse, VEHICLE.maxForward)
   // Kinematic bicycle approximation; steering has no effect while stationary.
   const heading = current.heading + speed / VEHICLE.wheelbase *
-    Math.tan(steer * VEHICLE.steeringRadians) * elapsed
+    Math.tan(effectiveSteerAngle(steer)) * (0.65 + 0.35 * grip) * elapsed
 
   return {
     x: current.x + Math.sin(heading) * speed * elapsed,

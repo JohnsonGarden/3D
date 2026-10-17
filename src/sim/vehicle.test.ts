@@ -79,3 +79,35 @@ test('four-axle kinematic stand-in uses observed first-to-fourth axle span', () 
   assert.ok(Math.abs(VEHICLE.totalLength - 11.2 / 3.1 * 2.5) < 1e-9)
   assert.ok(Math.abs(VEHICLE.frontBumperProjection - 0.8 / 3.1 * 2.5) < 1e-9)
 })
+
+test('paved mode changes do not create fictional free acceleration', async () => {
+  const { INITIAL_DRIVETRAIN, drivetrainReducer } = await import('./drivetrain.ts')
+  const all = drivetrainReducer(INITIAL_DRIVETRAIN, {type:'toggle-drive'})
+  const input = { ...none, throttle: 1, steer: 0.4 }
+  assert.deepEqual(
+    advanceVehicle(INITIAL_VEHICLE,input,1/60,INITIAL_DRIVETRAIN),
+    advanceVehicle(INITIAL_VEHICLE,input,1/60,all)
+  )
+})
+
+test('on illustrative loose surface AWD gains low-speed traction; locks remain bounded', async () => {
+  const { INITIAL_DRIVETRAIN, drivetrainReducer } = await import('./drivetrain.ts')
+  const loose = drivetrainReducer(INITIAL_DRIVETRAIN,{type:'toggle-surface'})
+  const all = drivetrainReducer(loose,{type:'toggle-drive'})
+  const locked = drivetrainReducer(all,{type:'toggle-lock',lock:'center'})
+  const input = { ...none, throttle:1, steer:0 }
+  const r = advanceVehicle(INITIAL_VEHICLE,input,1/60,loose)
+  const a = advanceVehicle(INITIAL_VEHICLE,input,1/60,all)
+  const l = advanceVehicle(INITIAL_VEHICLE,input,1/60,locked)
+  assert.ok(r.speed < a.speed && a.speed < l.speed)
+  assert.ok(l.speed <= VEHICLE.acceleration / 60)
+})
+
+test('backward-compatible default driving matches explicit 8x4 paved profile', async () => {
+  const { INITIAL_DRIVETRAIN } = await import('./drivetrain.ts')
+  const input = { ...none, throttle: 1, steer:0.7 }
+  assert.deepEqual(
+    advanceVehicle(INITIAL_VEHICLE,input,1/60),
+    advanceVehicle(INITIAL_VEHICLE,input,1/60,INITIAL_DRIVETRAIN)
+  )
+})
