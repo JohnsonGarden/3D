@@ -8,6 +8,7 @@ import { TRUCK_DIMENSIONS, scaleImportedModelByWidth } from './sim/truck-scale.t
 import type { DriverInput } from './sim/vehicle.ts'
 import { resolveDriverInput } from './controls/input.ts'
 import type { FrameMetrics } from './sim/frame-metrics.ts'
+import { ROAD_TRIP, upcomingCheckpoint } from './game/checkpoints.ts'
 import type { TouchAction } from './controls/input.ts'
 import {
   INITIAL_DRIVETRAIN, drivetrainReducer, tractionCoefficient, poweredAxles
@@ -64,6 +65,8 @@ export default function App() {
   const [collision, setCollision] = useState(false)
   const [showPerformance, setShowPerformance] = useState(false)
   const [frameStats, setFrameStats] = useState<FrameMetrics | null>(null)
+  const [checkpointCount, setCheckpointCount] = useState(0)
+  const [journeyResetCount, setJourneyResetCount] = useState(0)
   const [drivetrain, setDrivetrain] = useState(INITIAL_DRIVETRAIN)
   const drivetrainRef = useRef(INITIAL_DRIVETRAIN)
   drivetrainRef.current = drivetrain
@@ -360,11 +363,34 @@ export default function App() {
         </div>
       </header>
 
+      <section className="journey-strip" role="region" aria-label="公路旅行进度">
+        <div className="journey-progress">
+          <strong>积木公路旅行 <span>{checkpointCount} / {ROAD_TRIP.length}</span></strong>
+          <small>{upcomingCheckpoint(checkpointCount)
+            ? '下一站：' + upcomingCheckpoint(checkpointCount)!.label
+            : '三站全部抵达！恭喜完成旅程！'}</small>
+        </div>
+        <div className="journey-dots" aria-label="已完成的路标">
+          {ROAD_TRIP.map((gate, index) =>
+            <span key={gate.id} className={index < checkpointCount ? 'done' : ''}
+              aria-label={gate.label + (index < checkpointCount ? '已抵达' : '未抵达')}/>)}
+        </div>
+        <button type="button" onClick={() => {
+          keys.current.clear()
+          touchPointers.current.clear()
+          updateControls()
+          setCheckpointCount(0)
+          setJourneyResetCount(n=>n+1)
+          setResetCount(n=>n+1)
+        }}>重新开始旅程</button>
+      </section>
+
       <div className="world-stage">
         {webgl ?
           <World controls={controls} drivetrain={drivetrainRef} garageOpen={garageOpen} resetCount={resetCount}
             model={model} onSpeed={setSpeed} onCollision={setCollision}
-            monitorPerformance={showPerformance} onPerformance={setFrameStats} />
+            monitorPerformance={showPerformance} onPerformance={setFrameStats}
+            journeyResetCount={journeyResetCount} onCheckpoint={setCheckpointCount} />
           : <div role="alert" className="fallback">
               当前浏览器无法启动 WebGL 2。请开启硬件加速并更新浏览器，或换一台支持 3D 图形的电脑。
             </div>}
