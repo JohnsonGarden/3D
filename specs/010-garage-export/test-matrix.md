@@ -1,0 +1,10 @@
+# 010 — requirement verification matrix
+
+| ID | Automated checks | Manual/pending |
+| --- | --- | --- |
+| FR-001 | Playwright: import GLB, export, capture download, compare bytes, unchanged active/list after refresh; request POST/PUT/PATCH log | Mac Finder download & browser save preferences |
+| FR-002 | Node export.test.ts: filename policy, exact binary and GLB validation, limits | Different genuine child models |
+| FR-003 | Node: reject invalid/malformed; Playwright: corrupted stored binary export alert and no download, entry still present | Safari denied IndexedDB / low disk |
+| FR-004 | README and garage notice disclose manual backups, origin storage, local only | Parent understands backups |
+ 
+RED stage: tests intentionally refer to behavior/code not yet implemented. Do not report green evidence until CI runs.
