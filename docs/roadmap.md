@@ -34,6 +34,9 @@ Validated user-imported GLB bytes and metadata in 6-slot IndexedDB; active vehic
 ## Phase M1d: manual garage backup — 010 in progress
 Per-car explicit GLB export provides byte-for-byte original-file download without network upload or IndexedDB mutation. Each GLB must be manually backed up outside the browser and re-imported when needed; the feature is not cloud sync, whole-garage ZIP, or durable browser storage. Mac/Safari manual download still needs validation. See [010 SDD](../specs/010-garage-export/spec.md).
 
+## Phase M1e: touch controls — 011 in progress
+A five-button, pointer-capture, two-finger press-and-hold UI for small coarse-pointer screens lets children steer while accelerating or braking. Keyboard and phone input resolve into the existing fixed-step vehicle model; cancellation on release/blur/garage prevents stuck throttle. Real iOS Safari child usability and FPS still require manual measurements. See [011 SDD](../specs/011-touch-driving/spec.md).
+
 ## Phase M2: satisfying driving and garage
 Rapier collision/contacts, suspension and wheel visuals, controller/touch, track reset, more robust vehicle asset review, richer multi-car management UX and metadata/provenance; basic manual GLB export added in M1d. Sound settings and audio accessibility. Aim for kid testing with timed first-drive/steer/recovery sessions.
 
