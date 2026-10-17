@@ -91,3 +91,6 @@ Consolidate separate lockfile + three **fictional** cross-street experiments int
 
 ### 017 isolated Mac preview handoff
 The same checked standalone Finder bootstrap is pointed to cumulative `feat/017-integrate-branches` under **~/BrickWorld3D-preview-017** and default **127.0.0.1:4175** to avoid accidentally launching stale 014 code or overwriting old :4173/:4174 garages. Existing installed code is never auto-updated. The new preview includes session-only photo picking, does **not** generate 3D from photos, and is not a signed notarized app. Actual Finder install on the parent's Mac remains manual.
+
+## Phase M1g — 018 annotated photo capture handoff
+The existing 016 session-only photo picker now records manually tagged viewpoint per image and optional physical toy body L/W/H, reports missing front/rear/left/right/top/diagonal categories, and exports a JSON metadata-only capture manifest. This is **not** a photogrammetry/AI reconstruction pass or a claim of geometry fidelity; the current truck-only 2.50m scale is not replaced. See [018](../specs/018-photo-coverage-manifest/spec.md).
