@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { ChangeEvent } from 'react'
+import type { ChangeEvent, PointerEvent as ReactPointerEvent } from 'react'
 import { Box3, Object3D, Vector3 } from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import World from './world/World.tsx'
 import { validateGlbBytes } from './sim/glb-guard.ts'
 import { TRUCK_DIMENSIONS, scaleImportedModelByWidth } from './sim/truck-scale.ts'
 import type { DriverInput } from './sim/vehicle.ts'
+import { resolveDriverInput } from './controls/input.ts'
+import type { TouchAction } from './controls/input.ts'
 import {
   INITIAL_DRIVETRAIN, drivetrainReducer, tractionCoefficient, poweredAxles
 } from './sim/drivetrain.ts'
@@ -53,6 +55,7 @@ function canRenderWebGL(): boolean {
 
 export default function App() {
   const keys = useRef(new Set<string>())
+  const touchPointers = useRef(new Map<number, TouchAction>())
   const controls = useRef<DriverInput>({ throttle: 0, steer: 0, brake: false })
   const [garageOpen, setGarageOpen] = useState(false)
   const [resetCount, setResetCount] = useState(0)
@@ -77,15 +80,30 @@ export default function App() {
   const [webgl] = useState(canRenderWebGL)
 
   const updateControls = useCallback(() => {
-    const held = keys.current
-    controls.current = {
-      throttle: Number(held.has('w') || held.has('arrowup')) -
-        Number(held.has('s') || held.has('arrowdown')),
-      steer: Number(held.has('d') || held.has('arrowright')) -
-        Number(held.has('a') || held.has('arrowleft')),
-      brake: held.has(' ')
-    }
+    controls.current = resolveDriverInput(keys.current, new Set(touchPointers.current.values()))
   }, [])
+
+  const beginTouch = useCallback((action: TouchAction, event: ReactPointerEvent<HTMLButtonElement>) => {
+    if (event.pointerType === 'mouse' && event.button !== 0) return
+    event.preventDefault()
+    touchPointers.current.set(event.pointerId, action)
+    try { event.currentTarget.setPointerCapture(event.pointerId) }
+    catch { /* Synthetic pointer events may not support capture. */ }
+    updateControls()
+  }, [updateControls])
+
+  const endTouch = useCallback((event: ReactPointerEvent<HTMLButtonElement>) => {
+    touchPointers.current.delete(event.pointerId)
+    updateControls()
+  }, [updateControls])
+
+  useEffect(() => {
+    if (garageOpen) {
+      keys.current.clear()
+      touchPointers.current.clear()
+      updateControls()
+    }
+  }, [garageOpen, updateControls])
 
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
@@ -94,6 +112,7 @@ export default function App() {
       if (key === 'g' && !event.repeat) {
         setGarageOpen(wasOpen => !wasOpen)
         keys.current.clear()
+        touchPointers.current.clear()
         updateControls()
         return
       }
@@ -121,7 +140,7 @@ export default function App() {
       keys.current.delete(event.key.toLowerCase())
       updateControls()
     }
-    const blur = () => { keys.current.clear(); updateControls() }
+    const blur = () => { keys.current.clear(); touchPointers.current.clear(); updateControls() }
     window.addEventListener('keydown', down)
     window.addEventListener('keyup', up)
     window.addEventListener('blur', blur)
@@ -324,7 +343,7 @@ export default function App() {
           <div><strong>BRICK WORLD</strong><small>孩子的积木驾驶乐园 · 技术原型</small></div>
         </div>
         <button className="toolbar-button" onClick={() => {
-          keys.current.clear(); updateControls(); setGarageOpen(open => !open)
+          keys.current.clear(); touchPointers.current.clear(); updateControls(); setGarageOpen(open => !open)
         }} aria-expanded={garageOpen} aria-controls="garage-panel">
           {garageOpen ? '返回驾驶' : '打开车库'} <span className="keycap">G</span>
         </button>
@@ -389,6 +408,34 @@ export default function App() {
           <span><kbd>Space</kbd> 刹车</span>
           <span><kbd>Q</kbd> 驱动切换 · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 差速锁 · <kbd>T</kbd> 低附着路面</span>
         </aside>
+        {!garageOpen && (
+          <section className="touch-controls" aria-label="触屏驾驶控制">
+            <div className="touch-steering" aria-label="转向">
+              <button type="button" aria-label="左转（按住）"
+                onPointerDown={e => beginTouch('left', e)}
+                onPointerUp={endTouch} onPointerCancel={endTouch}
+                onLostPointerCapture={endTouch}>←<span>左转</span></button>
+              <button type="button" aria-label="右转（按住）"
+                onPointerDown={e => beginTouch('right', e)}
+                onPointerUp={endTouch} onPointerCancel={endTouch}
+                onLostPointerCapture={endTouch}>→<span>右转</span></button>
+            </div>
+            <div className="touch-pedals" aria-label="油门和制动">
+              <button type="button" aria-label="倒车（按住）"
+                onPointerDown={e => beginTouch('reverse', e)}
+                onPointerUp={endTouch} onPointerCancel={endTouch}
+                onLostPointerCapture={endTouch}>▼<span>倒车</span></button>
+              <button type="button" aria-label="刹车（按住）" className="touch-brake"
+                onPointerDown={e => beginTouch('brake', e)}
+                onPointerUp={endTouch} onPointerCancel={endTouch}
+                onLostPointerCapture={endTouch}>■<span>刹车</span></button>
+              <button type="button" aria-label="油门（按住）" className="touch-accelerate"
+                onPointerDown={e => beginTouch('accelerate', e)}
+                onPointerUp={endTouch} onPointerCancel={endTouch}
+                onLostPointerCapture={endTouch}>▲<span>油门</span></button>
+            </div>
+          </section>
+        )}
       </div>
 
       {garageOpen && <div className="garage-backdrop">
@@ -468,7 +515,7 @@ export default function App() {
               disabled={garageBusy || !garageReady} onChange={loadModel}/>
           </label>
           <p className="hint">只在本机浏览器中读取，不会上传。导入成功后自动保存到此浏览器的 IndexedDB（最多 6 辆）；可在上方手动切换和删除。导入模型以 X 轴包围盒宽度统一缩放至 2.50 m。若含后视镜等突起则需人工校准，车头方向应为 -Z。</p>
-          <button className="drive-button" onClick={() => {keys.current.clear(); updateControls(); setGarageOpen(false)}} disabled={garageBusy}>开始驾驶 →</button>
+          <button className="drive-button" onClick={() => {keys.current.clear(); touchPointers.current.clear(); updateControls(); setGarageOpen(false)}} disabled={garageBusy}>开始驾驶 →</button>
         </section>
       </div>}
       <section className="music-box" aria-label="背景音乐">
