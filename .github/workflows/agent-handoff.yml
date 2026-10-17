@@ -1,0 +1,37 @@
+name: Export complete photo-free agent handoff
+on:
+  push:
+    branches:
+      - docs/018-local-agent-handoff
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  package-handoff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build planning/Harness and runnable-source bundles
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+        run: python3 scripts/package-agent-handoff.py
+      - name: Verify photo-free archive and SHA manifest
+        run: |
+          python3 - <<'PY'
+          import json, zipfile, pathlib
+          for zippath in sorted(pathlib.Path('dist-handoff').glob('*.zip')):
+              with zipfile.ZipFile(zippath) as zf:
+                  names=zf.namelist()
+                  assert 'HANDOFF-MANIFEST.json' in names
+                  data=json.loads(zf.read('HANDOFF-MANIFEST.json'))
+                  assert not data['photos_included']
+                  assert len(data['files'])+1==len(names)
+                  assert not any('IMG_07' in name or name.endswith('.HEIC') for name in names)
+              print(zippath, "PASS")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 3DLEGOWORLD-complete-agent-handoff
+          path: dist-handoff/*.zip
+          retention-days: 30
