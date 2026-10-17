@@ -34,6 +34,10 @@ if (( SHOW_HELP )); then
 HELP
   exit 0
 fi
+# Safety: refuse root before invoking brew or npm. Never try to downgrade privileges.
+source "$SCRIPT_DIR/require-normal-user.sh"
+require_normal_user "$EUID"
+
 if ! [[ "$PORT" =~ ^[0-9]{1,5}$ ]] || (( 10#$PORT < 1024 || 10#$PORT > 65535 )); then
   echo "端口必须是 1024 到 65535 之间的数字，例如 BRICK_WORLD_PORT=4174。" >&2
   exit 2

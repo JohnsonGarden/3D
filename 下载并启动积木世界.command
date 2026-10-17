@@ -7,6 +7,18 @@ export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 HOME_DIR="${BRICK_WORLD_HOME:-$HOME/BrickWorld3D}"
 ARCHIVE_URL="https://github.com/JohnsonGarden/3D/archive/refs/heads/feat/lego-world-harness-v0.zip"
 
+# Abort BEFORE download, mkdir, or reuse of an old installed script.
+# Standalone bootstrap intentionally does not depend on adjacent project files.
+if [[ "${EUID:-$(id -u)}" == "0" ]]; then
+  cat >&2 <<'BRICKWORLD_ROOT_ERROR'
+积木世界安全检查：当前是 root 身份。Homebrew 不支持 root，安装器不会以 root 下载或执行项目。
+请在普通用户终端执行 id -u 确认结果不是 0。
+如果曾使用 sudo -s 或 sudo -i，先执行 exit 回到普通用户环境，再重新双击本安装器。
+不要以 sudo 启动游戏，也不要尝试绕过 Homebrew 的安全检查。
+BRICKWORLD_ROOT_ERROR
+  exit 77
+fi
+
 if [[ -d "$HOME_DIR" && -f "$HOME_DIR/package.json" &&
       -f "$HOME_DIR/scripts/start-local.sh" ]]; then
   echo "找到已安装的积木世界：$HOME_DIR"
