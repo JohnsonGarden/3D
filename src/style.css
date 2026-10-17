@@ -214,3 +214,15 @@ footer { color:#8498b4; text-align:center; font-size:11px; padding:10px; }
 .photo-preview-grid figcaption { font-size:10px; color:#415969; padding:5px 6px; overflow-wrap:anywhere; }
 .photo-intake small { display:block; font-size:11px; line-height:1.65; color:#53717b; }
 @media (max-width:420px) { .photo-preview-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+/* 018 — explicit manual viewpoint annotation & original toy size (not auto CV). */
+.photo-view-label { display:grid; gap:4px; padding:6px; color:#375362; font-size:10px; font-weight:700; }
+.photo-view-label select { width:100%; min-width:0; padding:8px 5px; border:1px solid #afc2c7; border-radius:7px; background:white; color:#193445; }
+.photo-coverage { margin:12px 0; color:#36596a; background:#fff; border:1px solid #c4d1d7; padding:10px; border-radius:8px; font-size:12px; line-height:1.5; }
+.toy-measurements { border:1px solid #b2c8ca; border-radius:10px; padding:10px; margin:10px 0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+.toy-measurements legend { color:#31515d; font-size:11px; font-weight:750; }
+.toy-measurements label { min-width:0; font-size:10px; color:#34505a; display:grid; gap:5px; }
+.toy-measurements input { width:100%; min-width:0; background:#fff; border:1px solid #adc3c5; border-radius:7px; padding:8px 6px; font-size:13px; }
+.capture-download { width:100%; margin:4px 0 10px; background:#244957; color:white; border:0; border-radius:10px; padding:11px; font-size:13px; font-weight:750; }
+.capture-download:disabled { opacity:.55; cursor:default; }
+@media(max-width:440px) { .toy-measurements { grid-template-columns:1fr; } }
