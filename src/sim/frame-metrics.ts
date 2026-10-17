@@ -10,16 +10,18 @@ export type FrameMetrics = Readonly<{
  */
 export class FrameMetricWindow {
   private readonly milliseconds: number[] = []
+  readonly capacity: number
+  readonly minimumSamples: number
 
-  constructor(
-    readonly capacity = 300,
-    readonly minimumSamples = 30
-  ) {
+  constructor(capacity = 300, minimumSamples = 30) {
     if (!Number.isInteger(capacity) || capacity < 1 ||
         !Number.isInteger(minimumSamples) ||
         minimumSamples < 1 || minimumSamples > capacity) {
       throw new RangeError('Invalid frame stats window configuration')
     }
+    // Node 22 --experimental-strip-types does not support TS parameter properties.
+    this.capacity = capacity
+    this.minimumSamples = minimumSamples
   }
 
   record(deltaSeconds: number): void {
