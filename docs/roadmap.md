@@ -87,3 +87,7 @@ Reuses the already executable one-click .command on the preview branch, pins the
 
 ## Phase M2e: fork convergence — 017
 Consolidate separate lockfile + three **fictional** cross-street experiments into one cumulative branch preserving deterministic scenery contact, road-trip gates, frame diagnostics, six-slot garage and photo intake. Crossing buildings are omitted **in the same shared geometry source** for visuals and collisions; npm lockfile enables `npm ci`. Do **not** mistake this for the later geospatial **Stockholm → Frankfurt → Los Angeles** central-city maps. See [017 SDD](../specs/017-integrated-driving-build/spec.md). Combined-branch CI and actual Mac testing tracked in tasks.
+
+
+### 017 isolated Mac preview handoff
+The same checked standalone Finder bootstrap is pointed to cumulative `feat/017-integrate-branches` under **~/BrickWorld3D-preview-017** and default **127.0.0.1:4175** to avoid accidentally launching stale 014 code or overwriting old :4173/:4174 garages. Existing installed code is never auto-updated. The new preview includes session-only photo picking, does **not** generate 3D from photos, and is not a signed notarized app. Actual Finder install on the parent's Mac remains manual.
