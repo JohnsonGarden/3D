@@ -9,6 +9,10 @@
 **适用于 MacBook Air / MacBook Pro 的 Apple Silicon 与 Intel Mac。**
 本功能在 GitHub Actions 的 Linux/Chromium 环境进行自动测试；Finder 双击和 Safari 仍需在你的 Mac 上验收。
 
+**最简方式：**下载单文件安装器 [`下载并启动积木世界.command`](下载并启动积木世界.command)，双击后自动从本仓库 GitHub 开发分支安装至 `~/BrickWorld3D`，构建并打开浏览器。重复运行会复用已有目录，不会覆盖本地修改。首次下载需要 Internet。若 ZIP 文件被系统阻止执行，按下文 Mac 安全说明操作。
+
+**或者使用项目源码 ZIP：**
+
 1. **下载含可运行代码的开发分支 ZIP**：[点击下载 3D 项目](https://github.com/JohnsonGarden/3D/archive/refs/heads/feat/lego-world-harness-v0.zip)。注意：目前默认 `main` 分支只有初始文件，不能用它来启动。
 2. 解压 ZIP，**保留整个文件夹**。进入文件夹，双击文件 **`启动积木世界.command`**（该文件不是图片，也不需要用编辑器打开）。
 3. 首次运行会检查 **Node.js >=22.12**、npm。如未安装，有 Homebrew 时脚本会**征得你同意**后安装 node@22；没有 Homebrew 则显示 Node.js 官方安装地址，安装后再次双击即可。
