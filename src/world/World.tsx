@@ -5,6 +5,8 @@ import { Box3, Group, Object3D, Vector3 } from 'three'
 import { scaleImportedModelByWidth, TRUCK_DIMENSIONS } from '../sim/truck-scale.ts'
 import { advanceVehicle, INITIAL_VEHICLE, VEHICLE, speedKmh } from '../sim/vehicle.ts'
 import { resolveSceneryContact } from '../sim/contact.ts'
+import { FrameMetricWindow } from '../sim/frame-metrics.ts'
+import type { FrameMetrics } from '../sim/frame-metrics.ts'
 import { CITY_BUILDINGS } from './city-layout.ts'
 import type { DriverInput, VehicleState } from '../sim/vehicle.ts'
 import { tickFixed } from '../sim/fixed-step.ts'
@@ -20,6 +22,8 @@ type WorldProps = {
   model: Object3D | null
   onSpeed: (speed: number) => void
   onCollision: (hit: boolean) => void
+  monitorPerformance: boolean
+  onPerformance: (metrics: FrameMetrics | null) => void
 }
 
 function BrickCar({ wheelStations }: { wheelStations: MutableRefObject<Record<string, Group | null>> }) {
@@ -170,12 +174,17 @@ function RoadsAndBuildings() {
   )
 }
 
-function DrivingScene({ controls, drivetrain, garageOpen, resetCount, model, onSpeed, onCollision }: WorldProps) {
+function DrivingScene({
+  controls, drivetrain, garageOpen, resetCount, model, onSpeed, onCollision,
+  monitorPerformance, onPerformance
+}: WorldProps) {
   const car = useRef<Group>(null)
   const wheelStations = useRef<Record<string, Group | null>>({})
   const vehicle = useRef<VehicleState>({ ...INITIAL_VEHICLE })
   const accumulated = useRef(0)
   const hudClock = useRef(0)
+  const frameWindow = useRef(new FrameMetricWindow())
+  const performanceClock = useRef(0)
   const contactActive = useRef(false)
   const targetPos = useRef(new Vector3())
   const lookAtPos = useRef(new Vector3())
@@ -189,7 +198,24 @@ function DrivingScene({ controls, drivetrain, garageOpen, resetCount, model, onS
     onCollision(false)
   }, [resetCount, onSpeed, onCollision])
 
+  useEffect(() => {
+    frameWindow.current.clear()
+    performanceClock.current = 0
+    onPerformance(null)
+  }, [monitorPerformance, garageOpen, onPerformance])
+
   useFrame((_, rawDt) => {
+    // Real RAF intervals, not the clamped 60 Hz simulation step.
+    // No frame-sampling or UI writes while diagnostics are disabled.
+    if (monitorPerformance && !garageOpen && !document.hidden) {
+      frameWindow.current.record(rawDt)
+      performanceClock.current += Math.min(rawDt, 0.25)
+      if (performanceClock.current >= 1) {
+        performanceClock.current = 0
+        const stats = frameWindow.current.snapshot()
+        if (stats) onPerformance(stats)
+      }
+    }
     const dt = Math.min(Math.max(rawDt, 0), 0.12)
     if (!garageOpen) {
       accumulated.current = tickFixed(
