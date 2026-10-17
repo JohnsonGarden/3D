@@ -9,3 +9,7 @@
 | FR-006 | GitHub Actions combined `npm run ci` and Playwright | Record CI run and screenshot |
 
 No full binary external network traffic or cloud upload is permitted. Test should not claim all 3D imported source GLBs always work.
+
+## Green evidence — 2026-10-17
+Run https://github.com/JohnsonGarden/3D/actions/runs/39035059140, commit `485bb7aa80788fbf04af3224aa6d1550424eed5c`: all 43 Node tests + 9 deploy tests + 12 Chromium tests passed; SDD validator/TS/Vite build green. `playable-browser-evidence` artifact includes actual Chromium garage screenshot after uploading a geometry-bearing self-contained GLB. E2E asserts reload restore, sample-vs-stored selection, deletion cancel/confirm, corrupt binary recovery, six-slot cap, no HTTP POST/PUT/PATCH.
+Manual limitations: real Mac/Safari, private mode/quota eviction, real HEIC-derived GLB and accurate model likeness, user backup/export/metadata thumbnails.
