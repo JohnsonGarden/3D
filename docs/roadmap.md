@@ -63,3 +63,7 @@ More children-created vehicles, collectibles/challenges, curated maps and option
 
 ## Phase M2a: first deterministic arcade scenery contact — 012
 Visible building/kiosk ground footprints and calibrated four-axle truck rectangle share fixed X/Z coordinates. Substepped swept tests prevent obvious forward tunneling, stop at the first contact, and permit reverse or R reset. This removes building ghosting without pretending to be Rapier rigid-body collision, spring suspension, curb dynamics, or real vehicle physics. Apple Silicon/Safari and full model profile QA remain manual. See [012 SDD](../specs/012-static-contact/spec.md).
+
+
+## Phase M2b: opt-in browser FPS/p95 instrumentation — 013
+A 300-frame bounded RAF interval window reports median FPS and p95 ms at <=1Hz while diagnostics are explicitly enabled during active driving. It provides real reference-device observation but **not** GPU timer queries, a remote benchmark or proof that the M5/phone meets success targets. Record warm-up, browser, viewport and screenshot manually. See [013 SDD](../specs/013-frame-diagnostics/spec.md).

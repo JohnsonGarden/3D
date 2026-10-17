@@ -140,3 +140,28 @@ footer { color:#8498b4; text-align:center; font-size:11px; padding:10px; }
   border-radius:8px; padding:9px; font-size:11px;
   line-height:1.5; max-width:220px;
 }
+
+
+/* Opt-in, locally calculated browser RAF diagnostics (no telemetry). */
+.toolbar-actions { display:flex; align-items:center; gap:10px; }
+.performance-toggle { color:#eaf2fc; background:#2d415b; border:1px solid #7890b3;
+  border-radius:10px; padding:10px 13px; font-size:12px; font-weight:700; }
+.performance-toggle[aria-pressed="true"] { background:#305e60; border-color:#8ecfba; }
+.performance-panel {
+  position:absolute; top:76px; left:24px; z-index:3; width:245px;
+  border:1px solid #9fc0db70; border-radius:13px; padding:12px 14px;
+  background:#122139e9; color:#f5f9ff; box-shadow:0 10px 30px #0005;
+  backdrop-filter:blur(10px);
+}
+.performance-panel > strong { display:block; font-size:12px; }
+.performance-panel p { margin:7px 0; font-size:12px; }
+.performance-values b { font-size:14px; font-variant-numeric:tabular-nums; }
+.performance-values small { font-size:10px; color:#b9cde3; }
+.performance-panel .performance-note { font-size:10px; color:#b1c5d9; line-height:1.5; }
+@media(max-width:620px){
+  .topbar { flex-wrap:wrap; }
+  .toolbar-actions { margin-left:auto; gap:7px; }
+  .performance-panel { top:83px; left:10px; width:min(175px,43vw); padding:8px; }
+  .performance-panel p,.performance-panel > strong { font-size:10px; }
+  .performance-values b { font-size:11px; }
+}

@@ -7,6 +7,7 @@ import { validateGlbBytes } from './sim/glb-guard.ts'
 import { TRUCK_DIMENSIONS, scaleImportedModelByWidth } from './sim/truck-scale.ts'
 import type { DriverInput } from './sim/vehicle.ts'
 import { resolveDriverInput } from './controls/input.ts'
+import type { FrameMetrics } from './sim/frame-metrics.ts'
 import type { TouchAction } from './controls/input.ts'
 import {
   INITIAL_DRIVETRAIN, drivetrainReducer, tractionCoefficient, poweredAxles
@@ -61,6 +62,8 @@ export default function App() {
   const [resetCount, setResetCount] = useState(0)
   const [speed, setSpeed] = useState(0)
   const [collision, setCollision] = useState(false)
+  const [showPerformance, setShowPerformance] = useState(false)
+  const [frameStats, setFrameStats] = useState<FrameMetrics | null>(null)
   const [drivetrain, setDrivetrain] = useState(INITIAL_DRIVETRAIN)
   const drivetrainRef = useRef(INITIAL_DRIVETRAIN)
   drivetrainRef.current = drivetrain
@@ -343,21 +346,42 @@ export default function App() {
           <span className="brand-square">L</span>
           <div><strong>BRICK WORLD</strong><small>孩子的积木驾驶乐园 · 技术原型</small></div>
         </div>
-        <button className="toolbar-button" onClick={() => {
-          keys.current.clear(); touchPointers.current.clear(); updateControls(); setGarageOpen(open => !open)
-        }} aria-expanded={garageOpen} aria-controls="garage-panel">
-          {garageOpen ? '返回驾驶' : '打开车库'} <span className="keycap">G</span>
-        </button>
+        <div className="toolbar-actions">
+          <button type="button" className="performance-toggle" aria-pressed={showPerformance}
+            aria-label={showPerformance ? '隐藏性能诊断' : '显示性能诊断'}
+            onClick={() => setShowPerformance(open => !open)}>
+            {showPerformance ? '隐藏性能' : '性能诊断'}
+          </button>
+          <button className="toolbar-button" onClick={() => {
+            keys.current.clear(); touchPointers.current.clear(); updateControls(); setGarageOpen(open => !open)
+          }} aria-expanded={garageOpen} aria-controls="garage-panel">
+            {garageOpen ? '返回驾驶' : '打开车库'} <span className="keycap">G</span>
+          </button>
+        </div>
       </header>
 
       <div className="world-stage">
         {webgl ?
           <World controls={controls} drivetrain={drivetrainRef} garageOpen={garageOpen} resetCount={resetCount}
-            model={model} onSpeed={setSpeed} onCollision={setCollision} />
+            model={model} onSpeed={setSpeed} onCollision={setCollision}
+            monitorPerformance={showPerformance} onPerformance={setFrameStats} />
           : <div role="alert" className="fallback">
               当前浏览器无法启动 WebGL 2。请开启硬件加速并更新浏览器，或换一台支持 3D 图形的电脑。
             </div>}
         <div className="scene-label">LOS ANGELES INSPIRED <span>虚构场景 · 非真实地图</span></div>
+        {showPerformance && (
+          <section className="performance-panel" role="region" aria-label="性能诊断">
+            <strong>本机浏览器帧率诊断</strong>
+            {frameStats
+              ? <div className="performance-values">
+                  <p>帧率中位数 <b>{frameStats.medianFps.toFixed(1)} FPS</b></p>
+                  <p>p95 帧间隔 <b>{frameStats.p95Ms.toFixed(1)} ms</b></p>
+                  <small>有效样本 {frameStats.count} 帧 · 滚动窗口</small>
+                </div>
+              : <p role="status">采样中……至少等待 30 个有效帧。</p>}
+            <p className="performance-note">来自浏览器动画帧，非 GPU 耗时或设备跑分。关闭后不保存、不上传；请在实际 Mac 上记录指标。</p>
+          </section>
+        )}
         <section className="hud" aria-label="驾驶信息">
           <p>正在驾驶</p><strong>{speed}<small> km/h</small></strong>
           <p className="model-label">{modelName}</p>
