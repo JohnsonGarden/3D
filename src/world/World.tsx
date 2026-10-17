@@ -193,9 +193,9 @@ function DrivingScene({ controls, garageOpen, resetCount, model, onSpeed }: Worl
       car.current.rotation.y = s.heading
     }
     targetPos.current.set(
-      s.x - Math.sin(s.heading) * 16.5,
+      s.x - Math.sin(s.heading) * 16.5 + Math.cos(s.heading) * 5.5,
       9,
-      s.z + Math.cos(s.heading) * 16.5
+      s.z + Math.cos(s.heading) * 16.5 + Math.sin(s.heading) * 5.5
     )
     camera.position.lerp(targetPos.current, 1 - Math.exp(-4.5 * dt))
     lookAtPos.current.set(s.x, 2.25, s.z - 4.2)
@@ -223,7 +223,7 @@ export default function World(props: WorldProps) {
   return (
     <Canvas
       aria-label="可驾驶的 3D 积木世界"
-      camera={{ position: [1.75, 9, 17], fov: 60, near: 0.1, far: 550 }}
+      camera={{ position: [7.25, 9, 17], fov: 60, near: 0.1, far: 550 }}
       dpr={[1, 1.75]}
       gl={{ antialias: true, powerPreference: 'high-performance' }}
     >
