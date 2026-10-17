@@ -15,6 +15,9 @@
 
 质量门禁：`npm test`、`npm run check:spec`、`npm run build`、`npm run test:e2e`（需要 Playwright 浏览器）。完整说明参见 [docs/harness.md](docs/harness.md)。
 
+## 真实积木的尺寸（家长实测）
+车身（不含前防撞栏）10.4cm 长、3.1cm 宽、车头最高 4.7cm、轮胎直径 1.4cm。游戏选择 2.50m 的真实卡车车身宽度，按 **80.645× 等比例放大**：车身长约 8.39m，车头最高约 3.79m，轮胎直径约 1.13m。前防撞栏突出长度未知，不假定为 0。详细规格：[006 卡车比例标定](specs/006-proportional-truck-scale/spec.md)。
+
 ## 从照片到世界
 
 仓库源分支 `JohnsonGarden-patch-1` 保存 `IMG_0719.HEIC` 至 `IMG_0724.HEIC` 六张原始素材。本次不修改、转码、公开提取或自动上传它们。它们**尚未**被验证是否足以重建完整车底/遮挡结构。重建方案见 [docs/asset-pipeline.md](docs/asset-pipeline.md)。

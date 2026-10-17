@@ -22,7 +22,7 @@ Rendering and physics must remain distinct; avoid React state per animation fram
 ## Coordinate model
 Right-handed: Y up; forward = negative Z at heading 0, X right. Distances m, time s, angles rad, speed m/s. Spawn at (0,0), heading 0. One road lane width 3.5m; initial road is stylized, not georeferenced.
 
-Imported models retain aspect ratio, fit uniform display bounding box (maximum horizontal dimension approximately 3.6m); their primary forward direction must be declared/verified. Wheel collisions not inferred from mesh. World vehicle bounding volume is separate from visual mesh.
+Parent-measured truck: body length 10.4cm excluding front bumper; width 3.1cm, front highest point 4.7cm, tire diameter 1.4cm. All dimensions scale uniformly from the 2.50m target game width (×80.645), yielding body length 8.387m, front peak 3.790m, tires 1.129m. Imported GLBs are width-calibrated from bounding-box X dimension to 2.50m with isotropic scale, not longest-dimension normalization. Primary forward (-Z) and up (+Y) must be verified; bbox width can include mirrors or outboard wheels, so parent calibration remains provisional. Wheel collisions and bumper overhang not inferred from mesh; world vehicle bounding volume is distinct.
 
 ## Future domain modules
 - asset-ingestion: HEIC handling, camera calibration, model reconstruction runs offline/explicit provider opt-in only; provenance in manifest.

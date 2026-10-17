@@ -6,7 +6,7 @@ Ratified 2026-10-17. Amendments must be explicit, versioned, and reflected in sp
 A child can start driving within 30 seconds without creating an account, paying, reading a manual or granting camera/microphone access. Controls visible, intuitive and reversible. No dark patterns, no punitive fail state in the first release.
 
 ## II. Real scale and honesty
-World units use meters; assets record original size, orientation, reconstruction confidence and scale conversion. Uniform scale only for display. Distinguish observed geometry, inferred geometry and artist-created placeholder. Never market placeholders as scans.
+World units use meters; assets record original size, orientation, reconstruction confidence and scale conversion. Uniform scale only for display. For the first parent-measured truck, the width-anchored uniform calibration is specified in specs/006-proportional-truck-scale: physical 3.1cm width → 2.50m game body width. Preserve known ratios and do not guess bumper overhang. Distinguish observed geometry, inferred geometry and artist-created placeholder. Never market placeholders as scans.
 
 ## III. Playability before world size
 Prioritize steering, camera, legibility and stable frame pacing. Set budgets and measure actual devices. Never enlarge the map at the cost of control responsiveness. The first slice is one car, one road loop/route, one garage interaction.

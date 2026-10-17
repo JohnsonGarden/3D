@@ -16,7 +16,7 @@ Given a WebGL-capable supported desktop browser, when page opens, then a visible
 Given garage is closed, when W/S/A/D or arrow keys are pressed, then movement and turning are bounded and predictable; Space brakes, R resets, keys released stop applying throttle. No negative infinite speed, NaN or teleportation.
 
 ### FR-003 Believable world scale and follow-camera
-Given a default car, when it moves, then chase camera follows smoothly, road lane is 3.5 m and vehicle shape remains proportional. Scene is explicitly LA-inspired, not georeferenced.
+Given the parent-measured truck, when it moves, then chase camera follows smoothly, road lane is 3.5 m and truck physical proportions use the calibrated 2.50m width per specs/006-proportional-truck-scale. Scene is explicitly LA-inspired, not georeferenced.
 
 ### FR-004 Garage session
 Given the page is loaded, when G or the Garage button is used, then garage view opens/closes, shows selected car and an option to import GLB; while open, simulation input is paused.

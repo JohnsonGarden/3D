@@ -21,7 +21,7 @@ Applies to Codex, Claude Code, Copilot and other agents. READ THIS FIRST.
 
 ## Rules
 - Protect the six original `IMG_0719.HEIC`–`IMG_0724.HEIC`; no edits or unexpected redistribution.
-- 1 Three.js world unit = 1 meter. LEGO piece proportions preserved; display vehicles are uniformly upscaled for road play. Road lanes target 3.5 m. No arbitrary per-axis scaling of children's models.
+- 1 Three.js world unit = 1 meter. Parent-measured source truck is 10.4cm body length (front bumper excluded), 3.1cm body width, 4.7cm max cab point, 1.4cm tire diameter. Scale uniformly to 2.50m body width (factor 80.645...), yielding 8.387m body length, 3.790m cab peak, 1.129m wheel diameter; never invent bumper projection. Road lanes target 3.5m. See specs/006-proportional-truck-scale; no arbitrary per-axis scaling.
 - Target desktop 60 fps with graceful 30 fps degradation; use instancing, reuse materials, limit lights/shadows/draw calls, avoid React state updates each frame. Measure before optimizing.
 - Keyboard and pointer controls must be discoverable; no forced autoplay; user-controlled volume and music local-first. Child-friendly, no telemetry/accounts by default.
 - Simulation is deterministic and fixed timestep. Clamp inputs and delta, forbid NaN/Infinity; do not tie physics to fluctuating render FPS. Rapier optional until collision requirement lands.

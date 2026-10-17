@@ -13,6 +13,9 @@ Photograph brick creation → reconstruction/curation → inspect 3D turntable �
 ## Phase M0: runnable vertical slice (current)
 One procedural brick car, roads and buildings, camera, keyboard driving and brake, garage overlay, locally imported GLB/music, specs and automated tests. Everything session-local; no claim to LA exact geography or raw-photo reconstruction.
 
+## Parent measurement update (2026-10-17)
+A first truck was measured at 10.4cm body length **excluding front bumper**, 3.1cm width, 4.7cm highest front point, 1.4cm tire diameter. We target 2.50m in-world truck width: exact scale 80.645×, body 8.387m, cab 3.790m, tire 1.129m; bumper projection is unknown. See specs/006-proportional-truck-scale.
+
 ## Phase M1: first authentic car
 Evaluate six HEIC views; ask for any missing views and measured brick dimensions. Produce approved GLB with three options: manually reconstructed LDraw/CAD (preferred when brick-accurate), conventional multi-view mesh, AI-assisted draft then manual repair. Side-by-side photo fidelity review, stable center, wheel alignment, parts/provenance data.
 

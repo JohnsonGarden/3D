@@ -5,6 +5,15 @@ Original HEIC files at photo source branch root:
 `IMG_0719.HEIC`, `IMG_0720.HEIC`, `IMG_0721.HEIC`, `IMG_0722.HEIC`, `IMG_0723.HEIC`, `IMG_0724.HEIC`.
 Do not overwrite originals or treat a file list as an actual visual quality audit. EXIF may contain sensitive location; strip metadata on exports.
 
+## Physical reference: parent's measurements (2026-10-17)
+- Body length **without front bumper**: 10.4 cm
+- Body width: 3.1 cm
+- Front-cab highest point: 4.7 cm
+- Tire outside diameter: 1.4 cm
+- Front bumper projection: unmeasured (null, not zero)
+- Width-calibrated in-world size: 2.50 m × 8.387 m × 3.790 m; wheel diameter 1.129 m, scale 80.645×; single isotropic multiplier.
+- Imported GLB preliminary bbox-X calibration only; final asset should use named body-width landmarks so mirrors/side wheels don't distort the reference. See specs/006-proportional-truck-scale.
+
 ## Capture protocol
 Capture 12–24 or more sharply focused overlapping views around the assembled model, consistent diffuse illumination, a matte/plain background, fixed focal length and no motion blur. Include front/rear/sides/roof/underside where safe. Add a ruler or known stud pitch as a scale reference. Shoot colorful/reflective and repeating LEGO studs carefully. Photographing several sides is NOT equivalent to guaranteed watertight reconstruction.
 
