@@ -26,6 +26,8 @@ import {
   VIEW_OPTIONS, evaluatePhotoCoverage, parseToyDimensions, createCaptureManifest
 } from './garage/capture-manifest.ts'
 import type { PhotoView, ToyDimensionFields } from './garage/capture-manifest.ts'
+import { assessPhotoPixels, QUALITY_HINT } from './garage/photo-quality.ts'
+import type { PhotoQualityStatus } from './garage/photo-quality.ts'
 
 const MAX_GLB = 20 * 1024 * 1024
 const MAX_AUDIO = 30 * 1024 * 1024
@@ -81,7 +83,8 @@ export default function App() {
   const [model, setModel] = useState<Object3D | null>(null)
   const [modelName, setModelName] = useState(SAMPLE_NAME)
   const [photoPreviews, setPhotoPreviews] = useState<{
-    name:string; url:string; type:string; size:number; view:PhotoView
+    name:string; url:string; type:string; size:number; view:PhotoView;
+    quality?:PhotoQualityStatus
   }[]>([])
   const [toyDimensions, setToyDimensions] = useState<ToyDimensionFields>({
     length:'',width:'',height:''
@@ -369,6 +372,30 @@ export default function App() {
     }
   }
 
+  const analyzeLocalPhoto = (image: HTMLImageElement, sourceUrl: string) => {
+    let quality: PhotoQualityStatus = 'unavailable'
+    try {
+      const width=image.naturalWidth, height=image.naturalHeight
+      if (!width || !height) throw new Error('Image has no decoded dimensions')
+      const ratio=Math.min(160/width,160/height,1)
+      const w=Math.max(1,Math.round(width*ratio))
+      const h=Math.max(1,Math.round(height*ratio))
+      const canvas=document.createElement('canvas')
+      canvas.width=w
+      canvas.height=h
+      const ctx=canvas.getContext('2d',{willReadFrequently:true})
+      if (!ctx) throw new Error('Canvas unavailable')
+      ctx.drawImage(image,0,0,w,h)
+      quality=assessPhotoPixels(ctx.getImageData(0,0,w,h).data,w,h,width,height).status
+    } catch {
+      // Decoding/CSP/memory failures should never delete a usable photo.
+      quality='unavailable'
+    }
+    // Replaced batches cannot be touched by a late onLoad from an older blob URL.
+    setPhotoPreviews(current=>current.map(p=>
+      p.url===sourceUrl && p.quality!==quality ? {...p,quality} : p))
+  }
+
   const exportCaptureManifest = () => {
     let objectUrl: string | null = null
     try {
@@ -635,8 +662,16 @@ export default function App() {
             {photoPreviews.length > 0 && <div className="photo-preview-grid">
               {photoPreviews.map((preview, index) =>
                 <figure key={preview.url}>
-                  <img src={preview.url} alt={'照片预览：' + preview.name} loading="lazy"/>
+                  <img src={preview.url} alt={'照片预览：' + preview.name}
+                    loading="lazy"
+                    onLoad={event=>analyzeLocalPhoto(event.currentTarget,preview.url)}
+                    onError={()=>setPhotoPreviews(current=>current.map(p=>
+                      p.url===preview.url?{...p,quality:'unavailable'}:p))}/>
                   <figcaption>{index + 1}. {preview.name}</figcaption>
+                  <p className="photo-quality-hint" role="status"
+                    aria-label={'照片画质：' + preview.name}>
+                    {preview.quality ? QUALITY_HINT[preview.quality] : '本机画质检查中……'}
+                  </p>
                   <label className="photo-view-label">拍摄角度
                     <select aria-label={'照片角度：' + preview.name}
                       value={preview.view}
@@ -675,6 +710,7 @@ export default function App() {
             <button type="button" className="capture-download"
               disabled={photoPreviews.length===0}
               onClick={exportCaptureManifest}>导出采集清单 JSON</button>
+            <small>曝光、分辨率和纹理提示仅来自本机小尺寸像素采样，不能判断车身是否遮挡或能否成功建模；检查结果不存储、不上传，也不会进入导出的清单。</small>
             <small>采集清单仅包含照片文件名、大小、人工标注角度和填写的厘米尺寸；不含原始照片、EXIF 或预览 URL。文件名可能有个人信息，只有点击后才会下载。本功能不会自动识别拍摄角度，不会自动建模或改变驾驶模型。</small>
             <small>最多 {MAX_PHOTOS} 张，每张 12 MiB、共 72 MiB；目前仅支持 JPG、PNG、WebP。HEIC 请先转换 JPG。照片仅保留当前页面内存，不会上传，也不会自动存入车库。</small>
           </section>
