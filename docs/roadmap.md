@@ -67,3 +67,7 @@ Visible building/kiosk ground footprints and calibrated four-axle truck rectangl
 
 ## Phase M2b: opt-in browser FPS/p95 instrumentation — 013
 A 300-frame bounded RAF interval window reports median FPS and p95 ms at <=1Hz while diagnostics are explicitly enabled during active driving. It provides real reference-device observation but **not** GPU timer queries, a remote benchmark or proof that the M5/phone meets success targets. Record warm-up, browser, viewport and screenshot manually. See [013 SDD](../specs/013-frame-diagnostics/spec.md).
+
+
+## Phase M2c: three visible road-trip markers — 014
+A simple fictional road game loop: three in-world colored gates with pure segment-crossing scoring, progress UI, and explicit journey restart. Improves child motivation and gives a deterministic acceptance path for future chunked neighborhoods. Progress stays session-local; not a road graph, licensed LA city reconstruction or savegame system. See [014 SDD](../specs/014-roadtrip-checkpoints/spec.md).
