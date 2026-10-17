@@ -226,3 +226,9 @@ footer { color:#8498b4; text-align:center; font-size:11px; padding:10px; }
 .capture-download { width:100%; margin:4px 0 10px; background:#244957; color:white; border:0; border-radius:10px; padding:11px; font-size:13px; font-weight:750; }
 .capture-download:disabled { opacity:.55; cursor:default; }
 @media(max-width:440px) { .toy-measurements { grid-template-columns:1fr; } }
+
+/* 019 heuristic photo-quality advisory; sampled only from local image pixels. */
+.photo-preview-grid .photo-quality-hint {
+  font-size:10px; line-height:1.55; color:#415f66; margin:4px 6px 5px;
+  min-height:30px; overflow-wrap:anywhere;
+}
