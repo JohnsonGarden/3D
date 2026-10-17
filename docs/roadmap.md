@@ -83,3 +83,7 @@ A simple fictional road game loop: three in-world colored gates with pure segmen
 
 ## Phase M2d: isolated cumulative preview launcher — 015
 Reuses the already executable one-click .command on the preview branch, pins the 014 cumulative verified gameplay source and installs under ~/BrickWorld3D-preview by default, with loopback port 4174. Original install and its :4173 IndexedDB origin are untouched. Existing preview files are reused without auto-overwrite. This is not a signed .app or an auto-updater; Mac Finder/security and first real-network installation require manual acceptance. See [015 SDD](../specs/015-safe-preview-installer/spec.md).
+
+
+## Phase M2e: fork convergence — 017
+Consolidate separate lockfile + three **fictional** cross-street experiments into one cumulative branch preserving deterministic scenery contact, road-trip gates, frame diagnostics, six-slot garage and photo intake. Crossing buildings are omitted **in the same shared geometry source** for visuals and collisions; npm lockfile enables `npm ci`. Do **not** mistake this for the later geospatial **Stockholm → Frankfurt → Los Angeles** central-city maps. See [017 SDD](../specs/017-integrated-driving-build/spec.md). Combined-branch CI and actual Mac testing tracked in tasks.
