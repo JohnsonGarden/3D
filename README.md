@@ -26,7 +26,7 @@ whoami
 **适用于 MacBook Air / MacBook Pro 的 Apple Silicon 与 Intel Mac。**
 本功能在 GitHub Actions 的 Linux/Chromium 环境进行自动测试；Finder 双击和 Safari 仍需在你的 Mac 上验收。
 
-**预览版最简方式（015 功能分支）：**下载单文件安装器 [`下载并启动积木世界.command`](下载并启动积木世界.command)，双击后从本仓库 GitHub 的**已验证累计功能 014 分支**下载至独立的 `~/BrickWorld3D-preview`，默认在本机 `http://127.0.0.1:4174` 启动。旧 `~/BrickWorld3D` 目录和 `:4173` 车库完全保留。重复运行只复用预览目录，**不会自动覆盖或升级源码**。首次需要联网；请勿以 sudo/root 运行。
+**整合版最简方式（017 开发分支，含照片预览与路口）：**下载单文件安装器 [`下载并启动积木世界.command`](下载并启动积木世界.command)，双击后从本仓库 GitHub 的 **017 整合开发分支**下载至独立的 `~/BrickWorld3D-preview-017`，默认在本机 `http://127.0.0.1:4175` 启动。旧 `~/BrickWorld3D` / `:4173` 和旧预览 `~/BrickWorld3D-preview` / `:4174` 均保留。请参考 017 PR 最新 CI 状态；此分支不是自动更新通道。重复运行只复用预览目录，**不会自动覆盖或升级源码**。首次需要联网；请勿以 sudo/root 运行。
 
 **或者使用项目源码 ZIP：**
 
