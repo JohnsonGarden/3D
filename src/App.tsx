@@ -254,7 +254,8 @@ export default function App() {
       document.body.appendChild(link)
       try { link.click() } finally { link.remove() }
       // Delay revocation so WebKit/Chromium can finish acquiring the file.
-      window.setTimeout(() => URL.revokeObjectURL(downloadUrl!), 2000)
+      const urlToRevoke = downloadUrl
+      window.setTimeout(() => URL.revokeObjectURL(urlToRevoke), 2000)
       downloadUrl = null
       setError('')
     } catch {
