@@ -16,6 +16,11 @@ jobs:
         with:
           node-version: '22'
       - run: npm install --no-audit --no-fund
+      - name: Capture npm-generated lockfile for review (temporary bootstrap)
+        run: |
+          echo BEGIN_BRICKWORLD_LOCK_012
+          cat package-lock.json
+          echo END_BRICKWORLD_LOCK_012
       - run: npm run ci
   chromium-smoke:
     runs-on: ubuntu-latest
