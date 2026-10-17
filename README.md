@@ -4,6 +4,23 @@
 
 **状态：交互式技术原型，已具备本机持久化车库（009）。** 现在的彩色积木车是程序化占位模型；**不是**仓库中 HEIC 照片生成的数字孪生，也不是洛杉矶实景重建。
 
+## macOS 以 root 安装失败的安全排错（008 修复）
+
+如果本地安装弹出 `Error: Running Homebrew as root is extremely dangerous and no longer supported.`，说明进程正在以 **root** 身份运行。**不要**通过修改 Homebrew、强制管理员运行或修改系统权限来绕过。最新版两个 `.command` 入口均在任何 Homebrew/npm/下载动作前检测 root 并退出。
+
+请在普通 Mac Terminal 执行：
+
+```bash
+id -u
+whoami
+```
+
+`id -u` 应是**非 0** 的账号 UID（通常 501）；0 代表 root。如果此前开启了提权终端，使用 `exit` 返回普通账户终端，不要给 .command 或 brew 加 `sudo`，然后重新运行新版安装器。
+
+**已有旧版本如何更新：** standalone 安装器不会覆盖 `~/BrickWorld3D` 内的旧文件。需要修复旧启动脚本，请单独下载最新 [开发分支 ZIP](https://github.com/JohnsonGarden/3D/archive/refs/heads/feat/lego-world-harness-v0.zip)，解压后运行其中的新版 `启动积木世界.command`（不要在未知权限下覆盖用户原目录）。如果 `~/BrickWorld3D` 有个人修改，请先备份；可以将最新的 `scripts/start-local.sh` 和 `scripts/require-normal-user.sh` 拷贝到原项目相应目录（保留其他文件）。
+
+如果切回普通用户后出现 `Permission denied` / `EACCES`，可能之前使用管理员权限创建了 root 所有的安装目录：检查 `ls -ld "$HOME/BrickWorld3D"` 和 `ls -ld "$HOME/.npm"`，先确认实际归属；**不要直接递归修改整个系统或 Homebrew 的权限**。提供检查结果再选择范围最小的处理方法。
+
 ## Mac 一键本地部署（建议使用）
 
 **适用于 MacBook Air / MacBook Pro 的 Apple Silicon 与 Intel Mac。**

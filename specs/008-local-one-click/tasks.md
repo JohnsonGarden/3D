@@ -14,3 +14,9 @@
 - A single-file zipped bootstrap is available for user download; its behavior has also been syntax-checked and tested with a stub project under a temporary path. Actual curl of live GitHub ZIP and macOS Finder/Gatekeeper on a Mac have not been run here.
 - Issue #6: repo does not yet have a committed `package-lock.json`; launcher uses npm install until lockfile delivered. This is a documented reproducibility gap, not an implementation-blocking one-click obstacle.
 - Remaining T-008 requires parent to run on MacBook Air M5 and report first-run result and Safari or Chrome WebGL rendering.
+
+## Root/Homebrew installer regression (2026-10-17)
+- [x] T-009 [FR-007] Add RED test for effective UID 0 refusal and ordinary UID acceptance; check both entry paths guard before brew, curl and installs.
+- [x] T-010 [FR-007] Add shared project launcher guard and standalone self-contained root check with non-invasive repair guidance.
+- [x] T-011 [FR-006,FR-007] Document regular-user recovery and old installer reuse caveat.
+- [ ] T-012 [FR-005,FR-007] Verify hotfix through GitHub Actions and record evidence; Mac Finder confirmation remains pending.

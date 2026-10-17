@@ -16,3 +16,8 @@ Commit `37f453fcb31402ee354324d9aad1072fc41efe20` CI: 39 Node vehicle tests, 6 d
 
 ## GREEN (2026-10-17)
 GitHub https://github.com/JohnsonGarden/3D/actions/runs/39033643766 at commit `0ddf97de0b271b2137538d1e9cb60661434fb9ff` passed: 39 Node sim tests, 9 deployment contract tests (Node static server, paths/health/HTTP, Bash preflight, standalone installer reuse/occupied-folder), SDD trace and TS/Vite build. 7 Playwright Chromium browser tests pass in separate job. Tests are Linux shell/Chromium, **not** a signed macOS app or Finder UI run.
+
+## Root/Homebrew remediation (FR-007)
+- Pure shell test sources `scripts/require-normal-user.sh`, invokes `require_normal_user 0` (nonzero with Chinese root explanation) and `require_normal_user 501` (success). Static checks ensure guards precede `brew`, npm, curl and writes in each launcher.
+- Project launcher checks `EUID` before `brew --prefix` and `npm`. Standalone bootstrap checks `EUID` before any download or access to previously installed code. This addresses the reported Homebrew root error without bypassing Homebrew policy.
+- CI runs as non-root Linux Ubuntu; **cannot claim real Mac Finder root test**. Parent must retry from an ordinary account and report UID/path ownership on failure.

@@ -5,6 +5,9 @@ Status: implemented and green on Linux GitHub Actions; standalone Mac bootstrap 
 ## User goal
 As a parent on a MacBook Air, I can unpack the project's development-branch ZIP, double-click **启动积木世界.command**, and play without entering npm commands or exposing my children's assets over LAN.
 
+## Root-context safety regression (2026-10-17)
+**FR-007:** Given a launcher invoked as effective UID 0, when it starts, it must fail *before* `brew --prefix`, `brew install`, npm, curl, mkdir or changing files. It must explain the root/Homebrew restriction in Chinese, suggest regular-user Terminal `id -u` and `exit` to leave a privileged shell, and explicitly discourage running installers via elevated privileges. The standalone bootstrap must guard root *even when reusing an older installed script*. Root/normal-user checks must have deterministic shell unit tests; macOS Finder smoke remains manual. No automatic privilege drop or chown.
+
 ## User entry points
 - Project-local: `启动积木世界.command` (requires extracted repo ZIP).
 - Standalone first-install: `下载并启动积木世界.command` (fetches the public dev branch archive into `~/BrickWorld3D` once; on repeated runs reuses that folder; never overwrites unrelated files). Download script checks extracted source structure and does not execute curl response as shell text.
