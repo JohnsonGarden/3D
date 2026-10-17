@@ -1,16 +1,21 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { CITY_BUILDINGS } from '../world/city-layout.ts'
+import { CROSSING_Z, ROAD_WIDTH_M } from '../world/street-layout.ts'
 import { advanceVehicle, INITIAL_VEHICLE, VEHICLE } from './vehicle.ts'
 import { intersectsScenery, resolveSceneryContact } from './contact.ts'
 
 const forward = {throttle:1, steer:0, brake:false}
 
 test('012 scene solids share one finite deterministic footprint list; spawned truck is clear', () => {
-  assert.equal(CITY_BUILDINGS.length, 42)
+  assert.equal(CITY_BUILDINGS.length, 38, 'four lots withdrawn to keep fictional junctions clear')
   assert.ok(CITY_BUILDINGS.some(b=>b.id==='roadside-kiosk'))
   assert.ok(CITY_BUILDINGS.every(b=>[b.x,b.z,b.width,b.depth,b.height].every(Number.isFinite)))
   assert.equal(intersectsScenery(INITIAL_VEHICLE, CITY_BUILDINGS), false)
+  for (const building of CITY_BUILDINGS) for (const z of CROSSING_Z) {
+    assert.ok(Math.abs(building.z - z) - building.depth / 2 >= ROAD_WIDTH_M / 2 + 1,
+      'solid buildings must leave crossing carriageways plus pedestrian clearance')
+  }
 })
 
 test('012 -Z bumper extends forward and rotation is respected in overlap SAT', () => {
