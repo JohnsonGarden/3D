@@ -1,6 +1,6 @@
-# Project Constitution v1.0 — LEGO World 3D
+# Project Constitution v1.1 — LEGO World 3D
 
-Ratified 2026-10-17. Amendments must be explicit, versioned, and reflected in specs, tests and ADRs.
+Ratified 2026-10-17. v1.1 amendment on 2026-10-17 records photo-first default car creation, paired structural rendering, and city staging as confirmed product intent. Amendments must be explicit, versioned, and reflected in specs, tests and ADRs.
 
 ## I. Joy-first child experience
 A child can start driving within 30 seconds without creating an account, paying, reading a manual or granting camera/microphone access. Controls visible, intuitive and reversible. No dark patterns, no punitive fail state in the first release.
@@ -28,6 +28,9 @@ Instructions are tool-neutral in AGENTS.md; Codex/Claude/Copilot adapters only p
 
 ## IX. Thin, replaceable architecture
 Browser-first and modular: pure domain → scene adapter → UI. No backend until feature requirements prove it. Prefer standard GLB/glTF boundaries and small ADRs to hard coupling.
+
+## X. Photo-first play and geographic phasing (v1.1 amendment)
+A child's multiview photos of their own brick creation are the intended primary path to a faithful playable brick/pixel 3D car. Never pass a generic procedural or manually imported placeholder off as automatic photo reconstruction. Realistic styling, when available, must reimagine the **same vehicle structure** and be reversible without gameplay identity loss. Preserve per-car measured proportions under one uniform play-scale factor. Before investing in city-scale fidelity, complete garage/photo intake/model generation and quality driving; later reconstruct **downtown Stockholm, then downtown Frankfurt, then downtown Los Angeles**, prioritizing actual road network and building placement over elaborate facade textures. Fictional test roads remain valid until then. See docs/product-requirements.md and specs/016-photo-first-workflow.
 
 ## Quality gates
 No merge without requirements trace, deterministic tests, build, interactive smoke check, source/asset-rights review, performance-impact note, and a candid list of unverified areas.
