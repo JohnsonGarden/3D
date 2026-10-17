@@ -5,5 +5,6 @@
 | FR-002 | Unit dark, bright, flat, low-res, textured; browser 1px PNG warns low-res | Verify real toy car conditions / misleading advisory |
 | FR-003 | Browser replace/clear removes stale findings and URLs | Finder/WebKit async image cancellation |
 | FR-004 | Full earlier SDD/Node/deploy/build/Chromium regression | Real Mac hardware/photo rendering |
+| FR-005 | Root-safe non-overwrite 019 installer URL, directory and default :4176 enforced in deployment tests | First Mac Finder network launch, browser storage cross-port check |
 
 Heuristic success is not model fidelity or reconstruction readiness.
