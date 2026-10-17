@@ -21,6 +21,7 @@ import {
 } from './garage/storage.ts'
 import type { GarageEntry } from './garage/storage.ts'
 import { prepareGarageExport } from './garage/export.ts'
+import { validatePhotoSelection, MAX_PHOTOS } from './garage/photo-intake.ts'
 
 const MAX_GLB = 20 * 1024 * 1024
 const MAX_AUDIO = 30 * 1024 * 1024
@@ -75,6 +76,7 @@ export default function App() {
   }, [])
   const [model, setModel] = useState<Object3D | null>(null)
   const [modelName, setModelName] = useState(SAMPLE_NAME)
+  const [photoPreviews, setPhotoPreviews] = useState<{name: string, url: string}[]>([])
   const [musicUrl, setMusicUrl] = useState<string | null>(null)
   const [musicName, setMusicName] = useState<string | null>(null)
   const [error, setError] = useState('')
@@ -157,6 +159,12 @@ export default function App() {
       window.removeEventListener('blur', blur)
     }
   }, [updateControls, garageOpen, dispatchDrivetrain])
+
+  // A selected photo set is session-only. Whenever it changes (or App unmounts),
+  // discard the previous set's browser-only object URLs, including image buffers.
+  useEffect(() => () => {
+    photoPreviews.forEach(preview => URL.revokeObjectURL(preview.url))
+  }, [photoPreviews])
 
   // URL belongs to the browser session, and is revoked on replacement / unmount.
   useEffect(() => () => {
@@ -324,6 +332,21 @@ export default function App() {
       }
     } finally {
       if (token === selectionVersion.current) setGarageBusy(false)
+    }
+  }
+
+  const loadPhotos = (event: ChangeEvent<HTMLInputElement>) => {
+    const photos = Array.from(event.target.files ?? [])
+    event.target.value = '' // allow reselecting the same photo set later
+    if (!photos.length) return
+    try {
+      const checked = validatePhotoSelection(photos)
+      const urls = checked.map(file => ({ name:file.name, url:URL.createObjectURL(file) }))
+      setPhotoPreviews(urls)
+      setError('')
+    } catch (cause) {
+      // A bad replacement must never destroy previously selected previews.
+      setError(cause instanceof Error ? cause.message : '无法读取所选照片，请重新选择。')
     }
   }
 
@@ -546,6 +569,31 @@ export default function App() {
               </div>
             </section>
           )}
+          <section className="photo-intake" aria-label="从多角度照片制作小车">
+            <h2>① 拍下孩子搭建的积木车</h2>
+            <p>选择多个角度的照片：车头、车尾、左侧、右侧、斜前方，以及能看到车顶的位置。尽量光线均匀、背景简单，最好放一把尺子或已知尺寸的积木作比例参考。</p>
+            <p className="photo-intake-notice"><strong>当前阶段：</strong>仅在本机预览照片；<strong>照片还不能自动生成 3D 模型</strong>。下一步才会接入忠于积木结构的建模和写实风转换。现阶段可以继续导入已有 GLB 体验驾驶。</p>
+            <div className="photo-actions">
+              <label className="file-button">选择多角度照片
+                <input aria-label="选择小车多角度照片" type="file" multiple
+                  accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+                  onChange={loadPhotos}/>
+              </label>
+              <button type="button" onClick={() => {setPhotoPreviews([]); setError('')}}
+                disabled={photoPreviews.length === 0} aria-label="清空已选照片">清空已选照片</button>
+            </div>
+            <p className="photo-count">{photoPreviews.length
+              ? `已选 ${photoPreviews.length} 张照片`
+              : '尚未选择照片'}</p>
+            {photoPreviews.length > 0 && <div className="photo-preview-grid">
+              {photoPreviews.map((preview, index) =>
+                <figure key={preview.url}>
+                  <img src={preview.url} alt={'照片预览：' + preview.name} loading="lazy"/>
+                  <figcaption>{index + 1}. {preview.name}</figcaption>
+                </figure>)}
+            </div>}
+            <small>最多 {MAX_PHOTOS} 张，每张 12 MiB、共 72 MiB；目前仅支持 JPG、PNG、WebP。HEIC 请先转换 JPG。照片仅保留当前页面内存，不会上传，也不会自动存入车库。</small>
+          </section>
           <div className="calibration" aria-label="等比例放大标定">
             <p className="eyebrow">卡车真实尺寸 · 以实测车宽为基准</p>
             <strong>{TRUCK_DIMENSIONS.scaleFactor.toFixed(2)}× 等比例放大</strong>

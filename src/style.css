@@ -189,3 +189,28 @@ footer { color:#8498b4; text-align:center; font-size:11px; padding:10px; }
  .journey-dots { margin:0 8px; }
  .journey-strip button { font-size:11px; }
 }
+
+/* 016 — locally previewed multi-angle photos; not a reconstruction UI. */
+.photo-intake {
+  border:1px solid #9ebbc2; background:#e7f1f0; border-radius:14px;
+  padding:14px; margin:12px 0 17px;
+}
+.photo-intake h2 { font-size:16px; line-height:1.5; margin:0 0 9px; color:#1d4551; }
+.photo-intake p { font-size:12px; line-height:1.65; margin:8px 0; color:#3c5965; }
+.photo-intake .photo-intake-notice {
+  background:#fff6db; border-left:3px solid #ce9237;
+  color:#514221; border-radius:6px; padding:9px 10px;
+}
+.photo-actions { display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin:12px 0 6px; }
+.photo-actions button {
+  color:#203e55; border:1px solid #adc0c9; background:#fff;
+  border-radius:9px; padding:10px 12px; font-size:12px;
+}
+.photo-actions button:disabled { opacity:.55; cursor:default; }
+.photo-intake .photo-count { font-weight:750; color:#245c65; }
+.photo-preview-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin:10px 0 13px; }
+.photo-preview-grid figure { min-width:0; margin:0; border:1px solid #b7cdd0; border-radius:9px; overflow:hidden; background:#fff; }
+.photo-preview-grid img { display:block; width:100%; aspect-ratio:4/3; object-fit:cover; background:#dce9e7; }
+.photo-preview-grid figcaption { font-size:10px; color:#415969; padding:5px 6px; overflow-wrap:anywhere; }
+.photo-intake small { display:block; font-size:11px; line-height:1.65; color:#53717b; }
+@media (max-width:420px) { .photo-preview-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
