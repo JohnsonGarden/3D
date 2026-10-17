@@ -8,3 +8,6 @@
 | FR-004 | GitHub Actions full spec/unit/deploy/build/Chromium suite plus screenshot evidence | Mac M5 performance benchmarks |
 
 Tests authored before feature implementation; do not infer mobile device FPS from Chromium emulation.
+
+## GREEN evidence
+Actions https://github.com/JohnsonGarden/3D/actions/runs/39039385172 — 49 Node unit, 11 deploy and 16 Chromium browser tests passed; TypeScript/Vite build, 7 SDD packets passed. Touch-mobile evidence screenshot is written to `test-results/touch-driving-mobile-chromium.png` by Chromium. Mobile emulation is not a measured physical iOS device.
