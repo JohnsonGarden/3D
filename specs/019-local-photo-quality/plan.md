@@ -10,3 +10,6 @@
 - A uniformly painted LEGO body, blank background or very zoomed-out photo can trigger low-detail advisory. Avoid a hard "unusable" verdict. Manual review is final.
 - Cross-origin restrictions cannot arise from local object URLs normally, but exceptions are caught.
 - The selector remains the same JPG/PNG/WebP subset; Safari HEIC cannot be claimed supported without actual decoding proof.
+
+## Preview release safety
+Reuse tested standalone download command but point to `feat/019-local-photo-quality`, in a new `~/BrickWorld3D-preview-019` directory on 4176. Keep all original checks and preserve 4173/4174/4175. Run deployment contract tests before presenting a Mac download link. Downloaded source is a feature branch, not an auto-updater or notarized application.
