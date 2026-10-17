@@ -13,8 +13,8 @@ if [[ "${EUID:-$(id -u)}" == "0" ]]; then
   cat >&2 <<'BRICKWORLD_ROOT_ERROR'
 积木世界安全检查：当前是 root 身份。Homebrew 不支持 root，安装器不会以 root 下载或执行项目。
 请在普通用户终端执行 id -u 确认结果不是 0。
-如果曾使用 sudo -s 或 sudo -i，先执行 exit 回到普通用户环境，再重新双击本安装器。
-不要以 sudo 启动游戏，也不要尝试绕过 Homebrew 的安全检查。
+如果当前处于提权后的 root 终端，请先输入 exit 回到普通用户环境，再重新双击本安装器。
+不要以管理员最高权限启动游戏，也不要尝试绕过 Homebrew 的安全检查。
 BRICKWORLD_ROOT_ERROR
   exit 77
 fi
