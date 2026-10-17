@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "test": "node --experimental-strip-types --test src/sim/*.test.ts src/garage/*.test.ts",
+    "test": "node --experimental-strip-types --test src/sim/*.test.ts src/garage/*.test.ts src/controls/*.test.ts",
     "check:spec": "node scripts/check-spec.mjs",
     "typecheck": "tsc --noEmit",
     "build": "npm run typecheck && vite build",
