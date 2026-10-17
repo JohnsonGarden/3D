@@ -43,3 +43,12 @@ test('real WebGL canvas drives forward and reset clears speed', async ({ page })
   await page.getByRole('button', { name: /重置车辆/ }).click()
   await expect(page.locator('.hud strong')).toContainText('0 km/h')
 })
+
+test('garage shows full truck calibration and explicit bumper exclusion', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: /打开车库/ }).click()
+  const info = page.getByLabel('等比例放大标定')
+  for (const expected of ['80.65×', '8.39 m', '2.50 m', '3.79 m', '1.13 m', '不含前防撞栏']) {
+    await expect(info).toContainText(expected)
+  }
+})

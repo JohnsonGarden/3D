@@ -10,3 +10,8 @@
 
 ### Baseline (RED stage)
 Existing code hardcodes passenger-car prototype (length 3.6 m, width 1.8 m), and imports GLB using longest dimension. These conflict with the measured physical-car contract; new tests must first reveal the missing calibration implementation.
+
+### GREEN implementation
+- Prototype now renders truck-sized cab, frame and wheels; geometry remains artistic placeholder.
+- User GLBs scale only by X-axis bounding width and are checked for positive nondegenerate dimensions; parent must review roof/bumper/forward-axis alignment.
+- Garage reveals all four calibrated physical dimensions, scale factor and bumper exclusion.

@@ -4,6 +4,7 @@ import { Box3, Object3D, Vector3 } from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import World from './world/World.tsx'
 import { validateGlbBytes } from './sim/glb-guard.ts'
+import { TRUCK_DIMENSIONS, scaleImportedModelByWidth } from './sim/truck-scale.ts'
 import type { DriverInput } from './sim/vehicle.ts'
 
 const MAX_GLB = 20 * 1024 * 1024
@@ -118,6 +119,7 @@ export default function App() {
           Math.max(dimension.x, dimension.y, dimension.z) <= 0) {
         throw new Error('empty or invalid geometry')
       }
+      scaleImportedModelByWidth(dimension)
       setModel(parsed.scene)
       setModelName(file.name)
       setError('')
@@ -188,10 +190,20 @@ export default function App() {
             <span aria-hidden="true">▰</span>
             <div><strong>{modelName}</strong><small>{model ? '自定义 GLB · 会话临时导入' : '程序化示例 · 尚非照片重建'}</small></div>
           </div>
+          <div className="calibration" aria-label="等比例放大标定">
+            <p className="eyebrow">卡车真实尺寸 · 以实测车宽为基准</p>
+            <strong>{TRUCK_DIMENSIONS.scaleFactor.toFixed(2)}× 等比例放大</strong>
+            <dl>
+              <div><dt>车身长（不含前防撞栏）</dt><dd>{TRUCK_DIMENSIONS.bodyLengthM.toFixed(2)} m</dd></div>
+              <div><dt>车身宽</dt><dd>{TRUCK_DIMENSIONS.bodyWidthM.toFixed(2)} m</dd></div>
+              <div><dt>车头最高点</dt><dd>{TRUCK_DIMENSIONS.cabHighestPointM.toFixed(2)} m</dd></div>
+              <div><dt>轮胎直径</dt><dd>{TRUCK_DIMENSIONS.tireDiameterM.toFixed(2)} m</dd></div>
+            </dl>
+          </div>
           <label className="file-button">导入孩子的小车（GLB）
             <input aria-label="导入 GLB 模型" type="file" accept=".glb,model/gltf-binary" onChange={loadModel}/>
           </label>
-          <p className="hint">只在本机浏览器中读取，不会上传。模型暂不永久保存。模型正面方向可能需要校准。</p>
+          <p className="hint">只在本机浏览器中读取，不会上传。模型暂不永久保存。导入模型以 X 轴包围盒宽度统一缩放至 2.50 m。若含后视镜等突起则需人工校准，车头方向应为 -Z。</p>
           <button className="drive-button" onClick={() => setGarageOpen(false)}>开始驾驶 →</button>
         </section>
       </div>}

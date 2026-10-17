@@ -1,7 +1,8 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useMemo, useRef } from 'react'
 import type { MutableRefObject } from 'react'
-import { Box3, Color, Group, MathUtils, Object3D, Vector3 } from 'three'
+import { Box3, Group, Object3D, Vector3 } from 'three'
+import { scaleImportedModelByWidth } from '../sim/truck-scale.ts'
 import { advanceVehicle, INITIAL_VEHICLE, VEHICLE, speedKmh } from '../sim/vehicle.ts'
 import type { DriverInput, VehicleState } from '../sim/vehicle.ts'
 import { tickFixed } from '../sim/fixed-step.ts'
@@ -17,46 +18,67 @@ type WorldProps = {
 const CITY_COLORS = ['#839bb5', '#b3a594', '#8ea6ab', '#a7ae98', '#c6a8a0']
 
 function BrickCar() {
-  const studs = useMemo(() => {
-    const list: [number, number][] = []
-    for (let x = -2; x <= 2; x++) {
-      for (let z = -4; z <= 4; z++) list.push([x * 0.32, z * 0.32])
-    }
-    return list
-  }, [])
+  // Procedural sample only — not reconstructed from the six HEIC images.
+  // External body dimensions are calibrated; wheelbase is a visual placeholder.
+  const radius = VEHICLE.wheelDiameter / 2
+  const halfLength = VEHICLE.length / 2
+  const cabRoof = VEHICLE.height - 0.12
 
   return (
     <group>
-      <mesh position={[0, 0.53, 0]} castShadow receiveShadow>
-        <boxGeometry args={[VEHICLE.width, 0.56, VEHICLE.length]} />
-        <meshStandardMaterial color="#e9a72b" metalness={0.08} roughness={0.39} />
+      <mesh position={[0, 0.99, 0]} castShadow receiveShadow>
+        <boxGeometry args={[VEHICLE.width, 0.82, VEHICLE.length]} />
+        <meshStandardMaterial color="#e9a72b" metalness={0.07} roughness={0.39} />
       </mesh>
-      <mesh position={[0, 1.05, 0.2]} castShadow>
-        <boxGeometry args={[1.45, 0.58, 1.55]} />
-        <meshStandardMaterial color="#f4c149" metalness={0.05} roughness={0.32} />
+      <mesh position={[0, 2.36, 1.55]} castShadow>
+        <boxGeometry args={[VEHICLE.width * 0.96, 1.88, 5.18]} />
+        <meshStandardMaterial color="#f5c14a" roughness={0.38} />
       </mesh>
-      <mesh position={[0, 1.14, -0.6]} castShadow>
-        <boxGeometry args={[1.47, 0.43, 0.38]} />
-        <meshStandardMaterial color="#8aaabd" metalness={0.15} roughness={0.2} />
+      <mesh position={[0, (cabRoof + 1.36) / 2, -2.44]} castShadow>
+        <boxGeometry args={[VEHICLE.width, cabRoof - 1.36, 3.4]} />
+        <meshStandardMaterial color="#e5a52f" metalness={0.07} roughness={0.34} />
       </mesh>
-      {studs.map(([x, z], index) => (
-        <mesh key={index} position={[x, 0.83, z]} castShadow>
-          <cylinderGeometry args={[0.105, 0.105, 0.09, 10]} />
-          <meshStandardMaterial color="#f3b332" roughness={0.36} />
+      <mesh position={[0, 2.7, -halfLength + 0.026]}>
+        <boxGeometry args={[VEHICLE.width * 0.84, 0.75, 0.045]} />
+        <meshStandardMaterial color="#7494aa" metalness={0.13} roughness={0.22} />
+      </mesh>
+      {[-1, 1].map(side => (
+        <mesh key={'window' + side}
+          position={[side * (VEHICLE.width / 2 + 0.003), 2.71, -2.66]}>
+          <boxGeometry args={[0.012, 0.72, 1.2]} />
+          <meshStandardMaterial color="#84a8b7" roughness={0.2} />
         </mesh>
       ))}
-      {[-1, 1].flatMap((side) => [-1.2, 1.2].map((front) => (
-        <mesh key={String(side) + ':' + String(front)}
-          position={[side * 0.9, 0.43, front]}
+      {[-3.5, -2.8, -2.1, -1.4].flatMap(z =>
+        [-0.8, 0, 0.8].map(x => (
+          <mesh key={'cab-stud-' + x + '-' + z}
+            position={[x, VEHICLE.height - 0.06, z]} castShadow>
+            <cylinderGeometry args={[0.16, 0.16, 0.12, 12]} />
+            <meshStandardMaterial color="#f5b539" roughness={0.42} />
+          </mesh>
+        ))
+      )}
+      {[-0.5, 0.2, 0.9, 1.6, 2.3, 3, 3.7].flatMap(z =>
+        [-0.8, 0, 0.8].map(x => (
+          <mesh key={'rear-stud-' + x + '-' + z}
+            position={[x, 3.38, z]} castShadow>
+            <cylinderGeometry args={[0.17, 0.17, 0.15, 12]} />
+            <meshStandardMaterial color="#f5c34c" roughness={0.42} />
+          </mesh>
+        ))
+      )}
+      {[-1, 1].flatMap(side => [-1, 1].map(axle => (
+        <mesh key={'wheel' + side + ':' + axle}
+          position={[side * (VEHICLE.width / 2 - 0.16), radius, axle * VEHICLE.wheelbase / 2]}
           rotation={[0, 0, Math.PI / 2]} castShadow>
-          <cylinderGeometry args={[0.45, 0.45, 0.24, 20]} />
-          <meshStandardMaterial color="#242b38" roughness={0.72} />
+          <cylinderGeometry args={[radius, radius, 0.32, 24]} />
+          <meshStandardMaterial color="#232b37" roughness={0.8} />
         </mesh>
       )))}
-      {[-0.52, 0.52].map(x => (
-        <mesh key={x} position={[x, 0.59, -1.83]}>
-          <boxGeometry args={[0.4, 0.17, 0.04]} />
-          <meshStandardMaterial color="#fff2c6" emissive="#ffeab4" emissiveIntensity={0.16} />
+      {[-0.8, 0.8].map(x => (
+        <mesh key={'headlamp' + x} position={[x, 1.02, -halfLength - 0.01]}>
+          <boxGeometry args={[0.45, 0.2, 0.018]} />
+          <meshStandardMaterial color="#fff3cf" emissive="#ffe6b0" emissiveIntensity={0.18} />
         </mesh>
       ))}
     </group>
@@ -70,7 +92,7 @@ function ImportedCar({ model }: { model: Object3D }) {
     if (bounds.isEmpty() || Math.max(size.x, size.y, size.z) <= 0) {
       return { scale: 1, center: [0, 0, 0] as [number, number, number] }
     }
-    const scale = VEHICLE.length / Math.max(size.x, size.z, size.y)
+    const scale = scaleImportedModelByWidth(size).scaleFactor
     const center = bounds.getCenter(new Vector3())
     return {
       scale,
@@ -105,10 +127,10 @@ function RoadsAndBuildings() {
         <meshStandardMaterial color="#839b71" roughness={0.98} />
       </mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, -260]} receiveShadow>
-        <planeGeometry args={[10.5, 760]} />
+        <planeGeometry args={[7, 760]} />
         <meshStandardMaterial color="#4c5767" roughness={0.96} />
       </mesh>
-      {[-5.6, 5.6].map(x => (
+      {[-4.2, 4.2].map(x => (
         <mesh key={x} position={[x, 0.08, -250]} receiveShadow>
           <boxGeometry args={[1.6, 0.16, 780]} />
           <meshStandardMaterial color="#b4b3a3" roughness={1} />
@@ -171,12 +193,12 @@ function DrivingScene({ controls, garageOpen, resetCount, model, onSpeed }: Worl
       car.current.rotation.y = s.heading
     }
     targetPos.current.set(
-      s.x - Math.sin(s.heading) * 7.5,
-      4.7,
-      s.z + Math.cos(s.heading) * 7.5
+      s.x - Math.sin(s.heading) * 16.5,
+      9,
+      s.z + Math.cos(s.heading) * 16.5
     )
     camera.position.lerp(targetPos.current, 1 - Math.exp(-4.5 * dt))
-    lookAtPos.current.set(s.x, 1.2, s.z - 2.7)
+    lookAtPos.current.set(s.x, 2.25, s.z - 4.2)
     camera.lookAt(lookAtPos.current)
     hudClock.current += dt
     if (hudClock.current > 0.25) {
@@ -201,7 +223,7 @@ export default function World(props: WorldProps) {
   return (
     <Canvas
       aria-label="可驾驶的 3D 积木世界"
-      camera={{ position: [0, 5, 9], fov: 60, near: 0.1, far: 550 }}
+      camera={{ position: [1.75, 9, 17], fov: 60, near: 0.1, far: 550 }}
       dpr={[1, 1.75]}
       gl={{ antialias: true, powerPreference: 'high-performance' }}
     >
