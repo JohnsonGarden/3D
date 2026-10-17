@@ -1,3 +1,4 @@
+import { TRUCK_DIMENSIONS } from './truck-scale.ts'
 /**
  * Game simulation is in SI units: meters, seconds, radians.
  * Forward = -Z at heading zero, X increases toward the right.
@@ -18,19 +19,21 @@ export interface DriverInput {
 }
 
 export const INITIAL_VEHICLE: Readonly<VehicleState> = Object.freeze({
-  x: 0, z: 0, heading: 0, speed: 0
+  x: TRUCK_DIMENSIONS.laneWidthM / 2, z: 0, heading: 0, speed: 0
 })
 
 export const VEHICLE = Object.freeze({
-  length: 3.6,
-  width: 1.8,
-  wheelbase: 2.5,
+  length: TRUCK_DIMENSIONS.bodyLengthM,
+  width: TRUCK_DIMENSIONS.bodyWidthM,
+  height: TRUCK_DIMENSIONS.cabHighestPointM,
+  wheelDiameter: TRUCK_DIMENSIONS.tireDiameterM,
+  wheelbase: 5.4, // provisional axle placement, not from photos
   maxForward: 22,
-  maxReverse: 5,
-  acceleration: 7,
-  brakeDeceleration: 16,
-  rollingResistance: 1.5,
-  steeringRadians: 0.48,
+  maxReverse: 4,
+  acceleration: 3.2,
+  brakeDeceleration: 9,
+  rollingResistance: 1.4,
+  steeringRadians: 0.4,
   maxStep: 1 / 30,
   fixedStep: 1 / 60
 })

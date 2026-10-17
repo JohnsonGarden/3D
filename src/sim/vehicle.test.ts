@@ -7,7 +7,7 @@ import {
 const none = { throttle: 0, steer: 0, brake: false }
 
 test('TDD: initial position and speed are zero', () => {
-  assert.deepEqual(INITIAL_VEHICLE, { x: 0, z: 0, heading: 0, speed: 0 })
+  assert.deepEqual(INITIAL_VEHICLE, { x: 1.75, z: 0, heading: 0, speed: 0 })
   assert.equal(speedKmh(INITIAL_VEHICLE), 0)
 })
 
@@ -16,7 +16,7 @@ test('TDD: throttle drives forward along negative Z', () => {
   for (let i = 0; i < 60; i++) s = advanceVehicle(s, { ...none, throttle: 1 }, 1 / 60)
   assert.ok(s.speed > 0)
   assert.ok(s.z < 0)
-  assert.equal(s.x, 0)
+  assert.equal(s.x, 1.75)
 })
 
 test('TDD: forward and reverse speeds are bounded even after long driving', () => {
@@ -63,4 +63,12 @@ test('TDD: invalid numbers are rejected, not propagated into camera/physics', ()
   assert.throws(() => advanceVehicle(INITIAL_VEHICLE, none, -1), RangeError)
   assert.throws(() => advanceVehicle(INITIAL_VEHICLE, { ...none, steer: Infinity }, 1 / 60), RangeError)
   assert.throws(() => advanceVehicle({ ...INITIAL_VEHICLE, x: NaN }, none, 1 / 60), RangeError)
+})
+
+test('physical truck sizes are derived from parent measurements', () => {
+  assert.ok(Math.abs(VEHICLE.length - 10.4 / 3.1 * 2.5) < 1e-9)
+  assert.equal(VEHICLE.width, 2.5)
+  assert.ok(Math.abs(VEHICLE.height - 4.7 / 3.1 * 2.5) < 1e-9)
+  assert.ok(Math.abs(VEHICLE.wheelDiameter - 1.4 / 3.1 * 2.5) < 1e-9)
+  assert.ok(VEHICLE.wheelbase > 4 && VEHICLE.wheelbase < VEHICLE.length)
 })
