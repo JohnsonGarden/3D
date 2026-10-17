@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "description": "Child-first browser LEGO car playground, with SDD/TDD harness",
-  "engines": { "node": ">=22.12.0" },
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "vite",
     "test": "node --experimental-strip-types --test src/sim/*.test.ts",
@@ -13,7 +15,10 @@
     "build": "npm run typecheck && vite build",
     "preview": "vite preview",
     "test:e2e": "playwright test",
-    "ci": "npm run check:spec && npm test && npm run build"
+    "ci": "npm run check:spec && npm test && npm run build && npm run test:deploy",
+    "test:deploy": "node --test tests/deploy/*.test.mjs",
+    "serve:local": "node scripts/serve-local.mjs",
+    "start:local": "bash scripts/start-local.sh"
   },
   "dependencies": {
     "@react-three/fiber": "^9.0.0",
