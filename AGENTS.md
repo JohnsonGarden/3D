@@ -55,3 +55,6 @@ If the next task is too large, split it at a child-visible playable checkpoint r
 
 
 - Road-trip 014: the three fictional road gates share `src/game/checkpoints.ts` geometry and their simulated swept trigger. Progress increments only upon the next checkpoint, never each rendered frame; R resets truck only, while explicitly named journey restart clears progress and truck. Do not portray fictional gate names as real LA geography, and do not promise savegame persistence.
+
+
+- Preview installer 015 is purposefully isolated: preview branch `下载并启动积木世界.command` downloads pinned cumulative 014 code into `~/BrickWorld3D-preview`, default loopback port 4174, and refuses UID 0 or occupied foreign directories. Old `~/BrickWorld3D` / :4173 remains untouched. **Never** auto-migrate browser IndexedDB between origin ports or auto-overwrite user-owned code; explicit per-GLB backups are the handoff. GitHub Actions shell tests do not prove Finder download or notarization.
