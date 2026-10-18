@@ -29,6 +29,7 @@ import type { PhotoView, ToyDimensionFields } from './garage/capture-manifest.ts
 import { assessPhotoPixels, QUALITY_HINT } from './garage/photo-quality.ts'
 import type { PhotoQualityStatus } from './garage/photo-quality.ts'
 import { reviewModelProportions } from './garage/model-proportions.ts'
+import LandmarkReviewPanel from './garage/LandmarkReviewPanel.tsx'
 
 const MAX_GLB = 20 * 1024 * 1024
 const MAX_AUDIO = 30 * 1024 * 1024
@@ -748,6 +749,12 @@ export default function App() {
                   结果仅保留本页，不代表已从照片生成模型、结构吻合或已获家长验收。
                   不修改原始 GLB、驾驶缩放或车库存储。</small>
               </section>
+            )}
+            {model && selectedGarageId && photoPreviews.length > 0 && (
+              <LandmarkReviewPanel key={[
+                selectionVersion.current, selectedGarageId,
+                ...photoPreviews.map(preview=>preview.url)
+              ].join('|')}/>
             )}
             <button type="button" className="capture-download"
               disabled={photoPreviews.length===0}
