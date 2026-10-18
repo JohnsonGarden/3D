@@ -232,3 +232,14 @@ footer { color:#8498b4; text-align:center; font-size:11px; padding:10px; }
   font-size:10px; line-height:1.55; color:#415f66; margin:4px 6px 5px;
   min-height:30px; overflow-wrap:anywhere;
 }
+
+/* 020: non-certifying, session-only GLB bounding-box ratio comparison. */
+.model-proportion-review { margin:10px 0 15px; padding:12px; border-radius:10px; border:1px solid #aac4cd; background:#f6fafb; color:#254858; }
+.model-proportion-review > strong { font-size:13px; }
+.photo-intake .model-proportion-review .ratio-warning { color:#853829; font-weight:750; background:#ffebe3; padding:7px; border-radius:6px; }
+.photo-intake .model-proportion-review .ratio-neutral { color:#245f4e; font-weight:750; background:#e3f4eb; padding:7px; border-radius:6px; }
+.model-proportion-review dl { margin:8px 0; }
+.model-proportion-review dl div { display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px; padding:6px 0; border-bottom:1px solid #d5e2e5; font-size:11px; }
+.model-proportion-review dt { font-weight:750; }
+.model-proportion-review dd { margin:0; font-variant-numeric:tabular-nums; }
+.photo-intake .model-proportion-review small { font-size:10px; color:#506d77; }

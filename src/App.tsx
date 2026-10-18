@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent, PointerEvent as ReactPointerEvent } from 'react'
 import { Box3, Object3D, Vector3 } from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
@@ -28,6 +28,7 @@ import {
 import type { PhotoView, ToyDimensionFields } from './garage/capture-manifest.ts'
 import { assessPhotoPixels, QUALITY_HINT } from './garage/photo-quality.ts'
 import type { PhotoQualityStatus } from './garage/photo-quality.ts'
+import { reviewModelProportions } from './garage/model-proportions.ts'
 
 const MAX_GLB = 20 * 1024 * 1024
 const MAX_AUDIO = 30 * 1024 * 1024
@@ -99,6 +100,23 @@ export default function App() {
   const [pendingDelete, setPendingDelete] = useState<GarageEntry | null>(null)
   const selectionVersion = useRef(0)
   const [webgl] = useState(canRenderWebGL)
+
+  // Inspect the selected imported GLB only. No image pixels or persisted
+  // approval enter this manual bounding-box comparison.
+  const selectedModelBounds = useMemo(() => {
+    if (!model) return null
+    const bounds = new Box3().setFromObject(model)
+    return bounds.isEmpty() ? null : bounds.getSize(new Vector3())
+  }, [model])
+  const proportionReview = useMemo(() => {
+    if (!photoPreviews.length || !selectedModelBounds) return null
+    try {
+      const measured = parseToyDimensions(toyDimensions)
+      return measured ? reviewModelProportions(measured, selectedModelBounds) : null
+    } catch {
+      return null // Partial/invalid measurements never produce a false success.
+    }
+  }, [photoPreviews.length, selectedModelBounds, toyDimensions])
 
   const updateControls = useCallback(() => {
     controls.current = resolveDriverInput(keys.current, new Set(touchPointers.current.values()))
@@ -707,6 +725,30 @@ export default function App() {
                 </label>
               ))}
             </fieldset>
+            {proportionReview && (
+              <section className="model-proportion-review" role="region"
+                aria-label="手动 GLB 比例核对">
+                <strong>② 手动 GLB 外接框比例核对</strong>
+                <p className={proportionReview.needsReview ? 'ratio-warning' : 'ratio-neutral'}
+                  role="status">
+                  {proportionReview.needsReview
+                    ? '比例存在偏差，请人工复核'
+                    : '外接框比例接近，仍需人工核对结构'}
+                </p>
+                <dl>
+                  <div><dt>长 / 宽</dt><dd>实物 {proportionReview.toyLengthToWidth.toFixed(2)}
+                    {' · '}GLB {proportionReview.modelLengthToWidth.toFixed(2)}
+                    {' · '}偏差 {proportionReview.lengthDifferencePct.toFixed(1)}%</dd></div>
+                  <div><dt>高 / 宽</dt><dd>实物 {proportionReview.toyHeightToWidth.toFixed(2)}
+                    {' · '}GLB {proportionReview.modelHeightToWidth.toFixed(2)}
+                    {' · '}偏差 {proportionReview.heightDifferencePct.toFixed(1)}%</dd></div>
+                </dl>
+                <small>仅比较当前 GLB 的 X宽/Y高/Z长外接框与手填厘米尺寸；
+                  车轮、保险杠、后视镜可能扩大外接框。照片未参与自动识别。
+                  结果仅保留本页，不代表已从照片生成模型、结构吻合或已获家长验收。
+                  不修改原始 GLB、驾驶缩放或车库存储。</small>
+              </section>
+            )}
             <button type="button" className="capture-download"
               disabled={photoPreviews.length===0}
               onClick={exportCaptureManifest}>导出采集清单 JSON</button>
