@@ -7,3 +7,5 @@ A guardian can manually enter the axle-center positions from the toy body's fron
 RED unit-test evidence: https://github.com/JohnsonGarden/3D/actions/runs/39104853073 (missing validator module).
 
 Manual review on the original toy and Mac/Safari remains pending. Automatic photo reconstruction, wheel rigging, per-car applied play scale, realistic car pairing and actual city maps remain unimplemented.
+
+GREEN: https://github.com/JohnsonGarden/3D/actions/runs/39105145050 — 20 SDD packets, 91/91 Node, 17/17 deploy, TypeScript/Vite build, 29/29 Chromium first-pass (no retries). The previous Chromium run 39104963048 caught a mistaken test expectation: replacing photos also clears physical dimensions, so the form intentionally disappears until dimensions are re-entered. The acceptance test now verifies that actual behavior.
