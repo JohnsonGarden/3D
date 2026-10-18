@@ -37,6 +37,10 @@ Applies to Codex, Claude Code, Copilot and other agents. READ THIS FIRST.
 - Local installer security hotfix: `scripts/require-normal-user.sh` and both .command launchers reject effective UID 0 BEFORE any brew/npm/download/write. Never bypass this or invoke Homebrew as root. Test simulated root & normal-user paths in `tests/deploy/launcher.test.mjs`. Previously installed copies of standalone launcher are intentionally NOT automatically overwritten.
 - Avoid fake claims: IndexedDB ≠ guaranteed storage/backup; placeholder brick car ≠ reconstructed car; stylized city ≠ GIS-faithful LA.
 
+## Future deployment contract 025 (user accepted 2026-10-18; NOT implemented)
+
+Read `specs/025-browser-docker-deployment/{spec,plan,tasks,test-matrix}.md` before changing packaging, mobile release workflows or backend assumptions. Long-term target: static Vite/React/Three.js game available at one HTTPS URL on iPhone Safari/Android Chrome/desktop, delivered by Docker Compose with light server-side static serving and client-side WebGL rendering. Keep existing localhost Mac installer intact. Measure real mobile usability and hosting limits; 2-vCPU/2-GB is an evaluation target, not a guarantee. Per-origin IndexedDB and photos remain **local only**; no implicit cross-device garage sync or cloud uploads. Accounts, upload services and family media transfer require a separately approved privacy/security spec and guardian opt-in. Do not claim Docker deployment has shipped because this contract exists. Current 024 work is independent.
+
 ## Where to work
 - `src/sim/`: pure vehicle model, fixed-step tests.
 - `src/world/`: GPU-dependent scene, asset loading and camera.
