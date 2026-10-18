@@ -43,6 +43,12 @@ A five-button, pointer-capture, two-finger press-and-hold UI for small coarse-po
 ## Phase M2: satisfying driving and garage
 Rapier collision/contacts, suspension and wheel visuals, controller/touch, track reset, more robust vehicle asset review, richer multi-car management UX and metadata/provenance; basic manual GLB export added in M1d. Sound settings and audio accessibility. Aim for kid testing with timed first-drive/steer/recovery sessions.
 
+## Phase M2f: web-hosted, Docker/Compose cross-device game (accepted target, PENDING)
+
+A child opens a single **HTTPS website** on iPhone/Android/tablet/desktop and drives without an installed game client. Package the existing Vite build as static files via a lightweight Docker runtime, optionally put it behind an HTTPS reverse proxy, and ensure mobile touch/landscape, safe-area handling and WebGL fallback work on actual phones. Rendering stays in the visitor's browser; do not propose a server GPU as a requirement for ordinary play. On a 2-vCPU/2-GB VPS, verify capacity empirically.
+
+This is not cloud garage: each browser retains its own origin-scoped IndexedDB and personal photos/GLBs/music remain local without a guardian-initiated transfer. Cloud sync is **later and optional**, with explicit guardian approval and security/data-retention design. Keep local Mac preview untouched. Prioritize finishing existing photo-derived car and game loop before investing in backend services. [025 spec](../specs/025-browser-docker-deployment/spec.md) defines acceptance; Docker/HTTPS/real-mobile release are not implemented yet.
+
 ## Phase M3 (LATER): licensed, authentic city-center maps — STOCKHOLM FIRST
 Real-world map work is deliberately deferred until photo-derived authentic cars, multi-car garage and satisfying driving exist. Only central district extents, each explicitly bounded and source-verified:
 1. **Stockholm / 斯德哥尔摩** downtown — first map.
