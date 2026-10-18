@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { ToyDimensionsCm } from './capture-manifest.ts'
 import { createWheelLayoutHandoff } from './wheel-layout.ts'
+import WorldScaleProposal from './WorldScaleProposal.tsx'
 
 export default function WheelLayoutHandoff({toy}:{toy:ToyDimensionsCm}) {
   const [positions,setPositions]=useState('')
@@ -45,6 +46,7 @@ export default function WheelLayoutHandoff({toy}:{toy:ToyDimensionsCm}) {
     </label>
     <button type="button" onClick={exportLayout}>导出轮组测量 JSON</button>
     {error && <p role="alert">{error}</p>}
+    <WorldScaleProposal toy={toy} positions={positions} tireCount={tireCount} diameter={diameter}/>
     <small>导出仅包含手填厘米数据，不含照片、文件名或模型字节。未知轮胎分配、转向和驱动轴不会猜测；当前导入 GLB 尚未绑定真实轮组物理。</small>
   </section>
 }
