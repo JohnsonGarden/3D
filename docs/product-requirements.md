@@ -39,6 +39,18 @@ The existing “LOS ANGELES INSPIRED” **fictional test strip** is **only a dev
 - Retain original photos under guardian control, model provenance/rights, reconstruction confidence and mesh version; no automatic upload/public share. Protect the six supplied HEIC originals; never rewrite them.
 - Existing browser IndexedDB garage is per-origin, six GLB slots and not a guaranteed backup.
 
+## 4A. Cross-device web release / Docker deployment (user-confirmed 2026-10-18; FUTURE)
+
+**Target experience:** Guardian deploys the same game as a static browser application on a small server using Docker Compose and a domain with HTTPS. A child launches that website directly from iPhone Safari, Android Chrome, a tablet or desktop Chrome/Safari, with no app installation, client-side developer tooling or mandatory account. The Three.js/WebGL scene and driving simulation run on each **client device**, not the VPS GPU. The current local Mac launcher remains supported and independent.
+
+- Require a reproducible production build with a lightweight non-root container where supported, documented Compose/healthcheck/rollback, HTTPS reverse proxy, limited public ports and no secrets inside image layers.
+- Real-mobile release gate: touch and two-pointer driving, safe-area controls, screen rotation/landscape usability, resume, WebGL fallback and measured FPS on actual iPhone/Android devices. Desktop keyboard/garage workflows must not regress. **No claim of mobile compatibility or server capacity solely from Chromium CI.**
+- A 2-vCPU/2-GB VPS is a plausible **static asset hosting trial**, not a verified throughput/performance specification. Client GPU and asset/network budgets are evaluated separately.
+- Preserve child-media privacy: website hosting does **not** upload photos, music or imported GLB by default. Browser IndexedDB garages are isolated by origin and device; no implicit cross-device sync or silent migration. Keep explicit per-GLB export/import.
+- Optional cloud garage is a separately authorized milestone after authentication/authorization, explicit guardian upload opt-in, quotas, secure access, retention and backup rules. Do not add accounts, AI/photo processing APIs or multiplayer as prerequisites to first hosted release.
+
+**Scope and precedence:** This is a future delivery requirement; keep child photo-to-car, garage and satisfying driving ahead of a speculative backend. The canonical observable acceptance is in [025 Docker/browser SDD](../specs/025-browser-docker-deployment/spec.md); writing the requirement does not imply production deployment has happened.
+
 ## 5. Phase priority and quality gates
 
 P0: **garage + road driving quality / stable isolated local preview** (existing implementation foundations).
