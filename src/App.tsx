@@ -30,6 +30,7 @@ import { assessPhotoPixels, QUALITY_HINT } from './garage/photo-quality.ts'
 import type { PhotoQualityStatus } from './garage/photo-quality.ts'
 import { reviewModelProportions } from './garage/model-proportions.ts'
 import LandmarkReviewPanel from './garage/LandmarkReviewPanel.tsx'
+import WheelLayoutHandoff from './garage/WheelLayoutHandoff.tsx'
 
 const MAX_GLB = 20 * 1024 * 1024
 const MAX_AUDIO = 30 * 1024 * 1024
@@ -756,6 +757,15 @@ export default function App() {
                 ...photoPreviews.map(preview=>preview.url)
               ].join('|')}/>
             )}
+            {model && selectedGarageId && photoPreviews.length > 0 && (() => {
+              let measured = null
+              try { measured = parseToyDimensions(toyDimensions) } catch { /* incomplete dimensions */ }
+              return measured ? <WheelLayoutHandoff key={[
+                selectionVersion.current, selectedGarageId,
+                ...photoPreviews.map(preview=>preview.url),
+                measured.lengthCm, measured.widthCm, measured.heightCm
+              ].join('|')} toy={measured}/> : null
+            })()}
             <button type="button" className="capture-download"
               disabled={photoPreviews.length===0}
               onClick={exportCaptureManifest}>导出采集清单 JSON</button>

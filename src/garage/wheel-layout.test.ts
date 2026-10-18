@@ -13,7 +13,7 @@ test('022 measured axle stations and fourteen tires export only declared facts',
     axleCentersFromBodyFrontCm:[2.4,5.6,7.2,8.8],
     tireCount:14,tireDiameterCm:1.4
   })
-  assert.equal(Object.keys(out).length,8)
+  assert.equal(Object.keys(out).length,9)
   assert.doesNotMatch(JSON.stringify(out),/blob:|data:|https?:|filename|modelName|garageId|photo/i)
 })
 
