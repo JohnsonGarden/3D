@@ -40,6 +40,12 @@ Given a change to source, when CI runs, then the feature packet, deterministic u
 - NFR-004 No undocumented copy of proprietary visual assets; provenance for future LDraw/maps.
 - NFR-005 Testable startup, input and garage paths without dependency on screenshot pixel identity across GPUs.
 
+## Accepted future distribution requirement (2026-10-18; NOT part of M0)
+
+The original **desktop-local M0 scope** is unchanged. The user additionally confirmed a **later public, containerized browser-game release**: deploy a reproducible static Vite/React/Three.js build behind Docker/Compose plus domain HTTPS so a child can open a URL on iPhone Safari, Android Chrome or desktop and drive without installing an app or starting a Mac-local process. Three.js still renders on the **client GPU**, not a server GPU; hosting capacity and actual mobile FPS must be verified rather than assumed. Existing Mac loopback installer remains independent.
+
+The current IndexedDB garage is browser+origin local: a hosted URL **does not** provide cross-device cars or silently upload child photos/GLBs/music. Any later cloud garage needs separate, explicit guardian opt-in, authorization, retention and privacy review. Mobile WebGL, touch/safe-area/landscape support and HTTPS are future acceptance gates; none are declared implemented by this amendment. **Authoritative Given/When/Then requirements, implementation plan and verification mapping: [025 Docker/browser spec](../025-browser-docker-deployment/spec.md).**
+
 ## Explicit non-goals M0
 - Automatic HEIC → 3D reconstruction, authentic photo match, persistent garage, accurate LA map, AI-generated streets, traffic AI, multiplayer, rigid-body suspension, mobile controls, downloadable game package.
 
