@@ -3,6 +3,12 @@
 ## Target pipeline and current limits (016)
 The intended interaction is local multiview photo intake → capture/scale assessment → faithful brick/pixel GLB generation plus approval → canonical car identity with physics/garage storage → **separately generated** structural realistic variant → reversible style selector. **Only photo intake session preview and manual GLB import are planned for 016; no real photo-to-mesh or style generation exists yet.** Ongoing early development uses fictional practice roads, with real-city downtown geodata only in **Stockholm, Frankfurt, Los Angeles** sequence. See [product requirements](product-requirements.md).
 
+## Future web hosting boundary (025 requirement only, not shipped)
+
+A future Docker Compose deployment serves the **static production frontend** over HTTPS through a separately configured reverse proxy. It does **not** host the Three.js renderer or the 60Hz driving simulation: each desktop/phone uses its own WebGL device GPU. The existing Mac-local loopback preview remains a separate workflow, not an exposed Docker admin/dev server. The server may be resource-light for a small user base, subject to measured asset traffic and real-device testing.
+
+The browser stores garage GLBs under its own origin-scoped IndexedDB; a cloud hostname does not grant cross-device synchronization or transfer children's photos/music. A later sync backend needs an explicit opt-in guardian privacy/security contract and a separate architecture decision. iPhone Safari and Android Chrome are future manual release gates. See [025 acceptance](../specs/025-browser-docker-deployment/spec.md).
+
 ## Current M0
 Browser-only React + Vite + React Three Fiber + Three.js, TypeScript. `src/sim/vehicle.ts` exposes pure kinematic stepping; `src/world/World.tsx` renders the procedural world and applies a fixed 1/60 s update; UI controls are DOM with keyboard input captured in a hook.
 
