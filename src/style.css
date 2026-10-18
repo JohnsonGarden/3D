@@ -243,3 +243,24 @@ footer { color:#8498b4; text-align:center; font-size:11px; padding:10px; }
 .model-proportion-review dt { font-weight:750; }
 .model-proportion-review dd { margin:0; font-variant-numeric:tabular-nums; }
 .photo-intake .model-proportion-review small { font-size:10px; color:#506d77; }
+
+/* 021: accessible guardian-operated GLB landmark review, never an auto-verification badge. */
+.model-proportion-review[aria-label="手动结构特征核对"] fieldset {
+  border:1px solid #c4d6da; border-radius:9px; padding:8px 12px;
+}
+.model-proportion-review[aria-label="手动结构特征核对"] legend {
+  font-size:12px; font-weight:750; color:#294f5b;
+}
+.model-proportion-review[aria-label="手动结构特征核对"] input[type="checkbox"] {
+  width:18px; height:18px; accent-color:#256a67; vertical-align:middle;
+}
+.model-proportion-review[aria-label="手动结构特征核对"] button {
+  display:block; width:100%; padding:10px; border:0; border-radius:9px;
+  background:#244957; color:white; font-size:12px; font-weight:750;
+}
+.model-proportion-review[aria-label="手动结构特征核对"] button:disabled {
+  opacity:.5; cursor:not-allowed;
+}
+.model-proportion-review[aria-label="手动结构特征核对"] p {
+  font-size:12px; line-height:1.6;
+}
